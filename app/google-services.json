@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1072457341769",
+    "project_id": "firebase-sharkna"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1072457341769:android:d4dec9fc974ca3ca",
+        "android_client_info": {
+          "package_name": "com.sharkna.khaled.sharkna"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1072457341769-313uaoseghn4mkt0qqjsoar8m7sqjgqf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sharkna.khaled.sharkna",
+            "certificate_hash": "b4ef9b156c622aacfa6cda819ccccddbd927135e"
+          }
+        },
+        {
+          "client_id": "1072457341769-7a7k5dkrvr9sv6h2bd4uoorjd2btrj1f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDYJOfPg1Z5uQ5I__-RukXoZ7hgeI1YkHs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
