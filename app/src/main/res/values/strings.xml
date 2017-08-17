@@ -44,4 +44,8 @@
     <string name="permission_rationale">"Contacts permissions are needed for providing email
         completions."
     </string>
+    <string name="server_client_id">1072457341769-313uaoseghn4mkt0qqjsoar8m7sqjgqf.apps.googleusercontent.com</string>
+    <string name="signed_in_fmt">sing in</string>
+    <string name="loading">loading</string>
+    <string name="signed_out">signed_out</string>
 </resources>
