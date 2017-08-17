@@ -36,6 +36,8 @@ public class SignInActivity extends AppCompatActivity implements
 
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
+    private static final String NAME = "name";
+    private static final String EMAIL = "email";
 
     private GoogleApiClient mGoogleApiClient;
     private TextView mStatusTextView;
@@ -45,6 +47,8 @@ public class SignInActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sign_in_activiry);
+
+
 
         // Views
         mStatusTextView = (TextView) findViewById(R.id.sign_in_status);
@@ -132,7 +136,13 @@ public class SignInActivity extends AppCompatActivity implements
             mStatusTextView.setText(getString(R.string.signed_in_fmt, acct.getDisplayName()));
             Log.d(TAG, "handleSignInResult: ===========account name"+acct.getDisplayName());
             Log.d(TAG, "handleSignInResult: ===========email"+acct.getEmail());
-            updateUI(true);
+            Intent intent = new Intent(this, MainActivity.class);
+            String accountName = acct.getDisplayName();
+            String accountEmail = acct.getEmail();
+            intent.putExtra(NAME,accountName);
+            intent.putExtra(EMAIL,accountEmail);
+            startActivity(intent);
+//            updateUI(true);
         } else {
             // Signed out, show unauthenticated UI.
             updateUI(false);

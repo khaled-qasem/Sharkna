@@ -3,6 +3,7 @@ package com.sharkna.khaled.sharkna.ui.activity;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
@@ -10,12 +11,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 
-import butterknife.BindView;
-import butterknife.OnClick;
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedAdapter;
@@ -23,13 +23,21 @@ import com.sharkna.khaled.sharkna.ui.adapter.FeedItemAnimator;
 import com.sharkna.khaled.sharkna.ui.view.FeedContextMenu;
 import com.sharkna.khaled.sharkna.ui.view.FeedContextMenuManager;
 
+import butterknife.BindView;
+import butterknife.OnClick;
+
 
 public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFeedItemClickListener,
         FeedContextMenu.OnFeedContextMenuItemClickListener {
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
+    public static final String GMAIL_PREFERENCE = "Gmail_account";
+
 
     private static final int ANIM_DURATION_TOOLBAR = 300;
     private static final int ANIM_DURATION_FAB = 400;
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final String NAME = "name";
+    private static final String EMAIL = "email";
 
     @BindView(R.id.rvFeed)
     RecyclerView rvFeed;
@@ -46,6 +54,54 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        Intent intent = getIntent();
+        if (intent != null) {
+            String Gemail = intent.getStringExtra(EMAIL);
+            String Gname = intent.getStringExtra(EMAIL);
+            if (Gname != null && Gemail!=null) {
+                SharedPreferences gmailAccount = getSharedPreferences(GMAIL_PREFERENCE, 0);
+                SharedPreferences.Editor editor = gmailAccount.edit();
+                editor.putString(NAME, Gname);
+                editor.putString(EMAIL, Gemail);
+
+                // Commit the edits!
+                editor.apply();
+            }
+        }
+
+        //add preferences here
+        // Restore preferences
+        SharedPreferences gmailAccount = getSharedPreferences(GMAIL_PREFERENCE, 0);
+        String gmailAccountName = gmailAccount.getString(NAME, null);
+        String gmailAccountEmail = gmailAccount.getString(EMAIL, null);
+        Log.d(TAG, "onCreate: gmailAccountEmail"+gmailAccountEmail);
+        Log.d(TAG, "onCreate: gmailAccountName"+gmailAccountName);
+        if (gmailAccountEmail != null) {
+            Log.d(TAG, "onCreate: gmailAccountEmail"+gmailAccountEmail);
+            Log.d(TAG, "onCreate: gmailAccountName"+gmailAccountName);
+        }else{
+            Intent SigniInIntent = new Intent(this, SignInActivity.class);
+//            String message = editText.getText().toString();
+//            intent.putExtra(EXTRA_MESSAGE, message);
+            startActivity(SigniInIntent);
+        }
+
+//        Intent intent = getIntent();
+//        String value = intent.getStringExtra("key");
+
+        //to set preferences
+       /* // We need an Editor object to make preference changes.
+        // All objects are from android.context.Context
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("silentMode", mSilentMode);
+
+        // Commit the edits!
+        editor.commit();*/
+
+
+
         setupFeed();
 
         if (savedInstanceState == null) {
