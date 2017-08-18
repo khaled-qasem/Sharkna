@@ -18,6 +18,7 @@ import android.view.animation.OvershootInterpolator;
 
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
+import com.sharkna.khaled.sharkna.account.GmailAccount;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedAdapter;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedItemAnimator;
 import com.sharkna.khaled.sharkna.ui.view.FeedContextMenu;
@@ -72,36 +73,23 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 
         //add preferences here
         // Restore preferences
-        SharedPreferences gmailAccount = getSharedPreferences(GMAIL_PREFERENCE, 0);
-        String gmailAccountName = gmailAccount.getString(NAME, null);
-        String gmailAccountEmail = gmailAccount.getString(EMAIL, null);
-        Log.d(TAG, "onCreate: gmailAccountEmail"+gmailAccountEmail);
-        Log.d(TAG, "onCreate: gmailAccountName"+gmailAccountName);
-        if (gmailAccountEmail != null) {
-            Log.d(TAG, "onCreate: gmailAccountEmail"+gmailAccountEmail);
-            Log.d(TAG, "onCreate: gmailAccountName"+gmailAccountName);
+        SharedPreferences account = getSharedPreferences(GMAIL_PREFERENCE, 0);
+        String accountName = account.getString(NAME, null);
+        String accountEmail = account.getString(EMAIL, null);
+        Log.d(TAG, "onCreate: accountEmail"+accountEmail);
+        Log.d(TAG, "onCreate: accountName"+accountName);
+        if (accountEmail != null) {
+            Log.d(TAG, "onCreate: accountEmail"+accountEmail);
+            Log.d(TAG, "onCreate: accountName"+accountName);
+            GmailAccount gmailAccount = GmailAccount.getInstance();
+            gmailAccount.setEmail(accountEmail);
+            gmailAccount.setName(accountName);
         }else{
-            Intent SigniInIntent = new Intent(this, SignInActivity.class);
+            Intent SignInIntent = new Intent(this, SignInActivity.class);
 //            String message = editText.getText().toString();
 //            intent.putExtra(EXTRA_MESSAGE, message);
-            startActivity(SigniInIntent);
+            startActivity(SignInIntent);
         }
-
-//        Intent intent = getIntent();
-//        String value = intent.getStringExtra("key");
-
-        //to set preferences
-       /* // We need an Editor object to make preference changes.
-        // All objects are from android.context.Context
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("silentMode", mSilentMode);
-
-        // Commit the edits!
-        editor.commit();*/
-
-
-
         setupFeed();
 
         if (savedInstanceState == null) {
