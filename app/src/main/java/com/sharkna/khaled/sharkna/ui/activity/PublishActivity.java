@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
@@ -26,6 +27,9 @@ import butterknife.OnCheckedChanged;
  */
 public class PublishActivity extends BaseActivity {
     public static final String ARG_TAKEN_PHOTO_URI = "arg_taken_photo_uri";
+    private static final String TAG = PublishActivity.class.getName();
+    public static final String SHARKNAPALESTINE_GMAIL_COM = "sharknapalestine@gmail.com";
+
 
     @BindView(R.id.tbFollowers)
     ToggleButton tbFollowers;
@@ -108,6 +112,8 @@ public class PublishActivity extends BaseActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_publish) {
+            Log.d(TAG, "saveImage: now send email through composeEmail");
+            composeEmail(new String[]{SHARKNAPALESTINE_GMAIL_COM},"Email from sharkna",photoUri);
             bringMainActivityToTop();
             return true;
         } else {
@@ -144,5 +150,45 @@ public class PublishActivity extends BaseActivity {
             tbFollowers.setChecked(!checked);
             propagatingToggleState = false;
         }
+    }
+
+    public void composeEmail(String[] addresses, String subject, Uri attachment) {
+        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+//        emailIntent.setType("application/image");
+        emailIntent.setType("text/plain");
+        emailIntent.setData(Uri.parse("mailto:"));
+        emailIntent.putExtra(Intent.EXTRA_EMAIL, addresses);
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+        emailIntent.putExtra(Intent.EXTRA_STREAM, attachment);
+//        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{SHARKNAPALESTINE_GMAIL_COM});
+//        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Test Subject");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, "From My App");
+//        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///mnt/sdcard/Myimage.jpeg"));
+        try {
+            if (emailIntent.resolveActivity(getPackageManager()) != null) {
+                startActivity(emailIntent);
+                Log.d(TAG, "composeEmail:========================== Email sent");
+//                Toast.makeText(TakePhotoActivity.this, "Email sent", Toast.LENGTH_SHORT).show();
+            }
+            Log.d(TAG, "composeEmail:==========================  Email not sent");
+//            Toast.makeText(TakePhotoActivity.this, "Email not sent", Toast.LENGTH_SHORT).show();
+
+//            startActivity(Intent.createChooser(i, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Log.d(TAG, "composeEmail:========================== Email There are no email clients installed");
+//            Toast.makeText(TakePhotoActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+        }
+
+//        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+
+
+//        Intent intent = new Intent(Intent.ACTION_SEND);
+//        intent.setType("*/*");
+//        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
+//        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+//        intent.putExtra(Intent.EXTRA_STREAM, attachment);
+//        if (intent.resolveActivity(getPackageManager()) != null) {
+//            startActivity(intent);
+//        }
     }
 }

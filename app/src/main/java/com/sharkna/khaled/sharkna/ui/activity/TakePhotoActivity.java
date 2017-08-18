@@ -51,6 +51,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     private static final Interpolator DECELERATE_INTERPOLATOR = new DecelerateInterpolator();
     private static final int STATE_TAKE_PHOTO = 0;
     private static final int STATE_SETUP_PHOTO = 1;
+    private static final String TAG = TakePhotoActivity.class.getName();
 
     @BindView(R.id.vRevealBackground)
     RevealBackgroundView vRevealBackground;
@@ -151,6 +152,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
     public void onTakePhotoClick() {
         btnTakePhoto.setEnabled(false);
         cameraView.takePicture(true, true);
+
         animateShutter();
     }
 
@@ -245,7 +247,10 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
             super.saveImage(xact, image);
             photoPath = getPhotoPath();
         }
+
     }
+
+
 
     private void showTakenPicture(Bitmap bitmap) {
         vUpperPanel.showNext();
@@ -280,10 +285,12 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
                 }
             }, 400);
         } else if (currentState == STATE_SETUP_PHOTO) {
+
             vUpperPanel.setInAnimation(this, R.anim.slide_in_from_left);
-            vLowerPanel.setInAnimation(this, R.anim.slide_in_from_left);
+//            vLowerPanel.setInAnimation(this, R.anim.slide_in_from_left);
             vUpperPanel.setOutAnimation(this, R.anim.slide_out_to_right);
-            vLowerPanel.setOutAnimation(this, R.anim.slide_out_to_right);
+//            vLowerPanel.setOutAnimation(this, R.anim.slide_out_to_right);
+            vLowerPanel.setVisibility(View.INVISIBLE);
             ivTakenPhoto.setVisibility(View.VISIBLE);
         }
     }
