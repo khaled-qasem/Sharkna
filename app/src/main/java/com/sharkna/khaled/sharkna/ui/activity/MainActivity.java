@@ -18,6 +18,7 @@ import android.view.animation.OvershootInterpolator;
 
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
+import com.sharkna.khaled.sharkna.account.GMailSender;
 import com.sharkna.khaled.sharkna.account.GmailAccount;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedAdapter;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedItemAnimator;
@@ -242,5 +243,25 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 
     public void showLikedSnackbar() {
         Snackbar.make(clContent, "Liked!", Snackbar.LENGTH_SHORT).show();
+    }
+
+
+    //to send email on gmail
+    private void sendGmail(){
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    GMailSender sender = new GMailSender("sylvain.saurel@gmail.com",
+                            "your_password");
+                    sender.sendMail("Hello from JavaMail", "Body from JavaMail",
+                            "sylvain.saurel@gmail.com", "sylvain.saurel@gmail.com");
+                } catch (Exception e) {
+                    Log.e("SendMail", e.getMessage(), e);
+                }
+            }
+
+        }).start();
     }
 }

@@ -152,43 +152,33 @@ public class PublishActivity extends BaseActivity {
         }
     }
 
-    public void composeEmail(String[] addresses, String subject, Uri attachment) {
-        Intent emailIntent = new Intent(Intent.ACTION_SEND);
+    public void composeEmail(final String[] addresses, final String subject, final Uri attachment) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Intent emailIntent = new Intent(Intent.ACTION_SEND);
 //        emailIntent.setType("application/image");
-        emailIntent.setType("text/plain");
-        emailIntent.setData(Uri.parse("mailto:"));
-        emailIntent.putExtra(Intent.EXTRA_EMAIL, addresses);
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
-        emailIntent.putExtra(Intent.EXTRA_STREAM, attachment);
+                emailIntent.setType("text/plain");
+                emailIntent.setData(Uri.parse("mailto:"));
+                emailIntent.putExtra(Intent.EXTRA_EMAIL, addresses);
+                emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
+                emailIntent.putExtra(Intent.EXTRA_STREAM, attachment);
 //        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{SHARKNAPALESTINE_GMAIL_COM});
 //        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Test Subject");
-        emailIntent.putExtra(Intent.EXTRA_TEXT, "From My App");
+                emailIntent.putExtra(Intent.EXTRA_TEXT, "From My App");
 //        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///mnt/sdcard/Myimage.jpeg"));
-        try {
-            if (emailIntent.resolveActivity(getPackageManager()) != null) {
-                startActivity(emailIntent);
-                Log.d(TAG, "composeEmail:========================== Email sent");
-//                Toast.makeText(TakePhotoActivity.this, "Email sent", Toast.LENGTH_SHORT).show();
-            }
-            Log.d(TAG, "composeEmail:==========================  Email not sent");
-//            Toast.makeText(TakePhotoActivity.this, "Email not sent", Toast.LENGTH_SHORT).show();
-
+                try {
+                    if (emailIntent.resolveActivity(getPackageManager()) != null) {
+                        startActivity(emailIntent);
+                        Log.d(TAG, "composeEmail:========================== Email sent");
+                    }
+                    Log.d(TAG, "composeEmail:==========================  Email not sent");
 //            startActivity(Intent.createChooser(i, "Send mail..."));
-        } catch (android.content.ActivityNotFoundException ex) {
-            Log.d(TAG, "composeEmail:========================== Email There are no email clients installed");
-//            Toast.makeText(TakePhotoActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
-        }
+                } catch (android.content.ActivityNotFoundException ex) {
+                    Log.d(TAG, "composeEmail:========================== Email There are no email clients installed");
+                }
+            }
+        }).start();
 
-//        startActivity(Intent.createChooser(emailIntent, "Send mail..."));
-
-
-//        Intent intent = new Intent(Intent.ACTION_SEND);
-//        intent.setType("*/*");
-//        intent.putExtra(Intent.EXTRA_EMAIL, addresses);
-//        intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-//        intent.putExtra(Intent.EXTRA_STREAM, attachment);
-//        if (intent.resolveActivity(getPackageManager()) != null) {
-//            startActivity(intent);
-//        }
     }
 }
