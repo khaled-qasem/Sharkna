@@ -82,6 +82,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         if (accountEmail != null) {
             Log.d(TAG, "onCreate: accountEmail"+accountEmail);
             Log.d(TAG, "onCreate: accountName"+accountName);
+//            sendGmail();
             GmailAccount gmailAccount = GmailAccount.getInstance();
             gmailAccount.setEmail(accountEmail);
             gmailAccount.setName(accountName);
@@ -245,7 +246,6 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         Snackbar.make(clContent, "Liked!", Snackbar.LENGTH_SHORT).show();
     }
 
-
     //to send email on gmail
     private void sendGmail(){
         new Thread(new Runnable() {
@@ -253,10 +253,11 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             @Override
             public void run() {
                 try {
-                    GMailSender sender = new GMailSender("sylvain.saurel@gmail.com",
-                            "your_password");
+                    Log.d(TAG, "run: send email ***********************************");
+                    GMailSender sender = new GMailSender("khaled.alqerem@gmail.com",
+                            "password");
                     sender.sendMail("Hello from JavaMail", "Body from JavaMail",
-                            "sylvain.saurel@gmail.com", "sylvain.saurel@gmail.com");
+                            "another email", "sharknapalestine@gmail.com");
                 } catch (Exception e) {
                     Log.e("SendMail", e.getMessage(), e);
                 }
