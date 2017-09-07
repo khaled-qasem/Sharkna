@@ -30,7 +30,7 @@ import butterknife.OnClick;
 
 
 public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFeedItemClickListener,
-        FeedContextMenu.OnFeedContextMenuItemClickListener {
+        FeedContextMenu.OnFeedContextMenuItemClickListener,ICheckSelfPermissionActivity {
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
     public static final String GMAIL_PREFERENCE = "Gmail_account";
 
@@ -52,10 +52,22 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 
     private boolean pendingIntroAnimation;
 
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        PermissionHandler permissionHandler = new PermissionHandler();
+        permissionHandler.handleRequest(requestCode, permissions, grantResults, this.getApplicationContext());
+
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        PermissionHandler permissionHandler = new PermissionHandler();
+        if (permissionHandler.canMakeSmores()) {
+            permissionHandler.askForPermissions(this);
+        }
 
         Intent intent = getIntent();
         if (intent != null) {
