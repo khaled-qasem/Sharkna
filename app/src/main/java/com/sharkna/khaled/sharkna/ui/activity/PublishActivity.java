@@ -16,6 +16,7 @@ import android.widget.ToggleButton;
 
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
+import com.sharkna.khaled.sharkna.account.GMailSender;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -29,6 +30,8 @@ public class PublishActivity extends BaseActivity {
     public static final String ARG_TAKEN_PHOTO_URI = "arg_taken_photo_uri";
     private static final String TAG = PublishActivity.class.getName();
     public static final String SHARKNAPALESTINE_GMAIL_COM = "sharknapalestine@gmail.com";
+    public static final String PASSWORD = "sharkna12345";
+    public static final String RECIPIENTS = "khaled.alqerem@gmail.com";
 
 
     @BindView(R.id.tbFollowers)
@@ -52,7 +55,9 @@ public class PublishActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish);
-        toolbar.setNavigationIcon(R.drawable.ic_arrow_back_grey600_24dp);
+        if (toolbar != null) {
+            toolbar.setNavigationIcon(R.drawable.ic_arrow_back_grey600_24dp);
+        }
         photoSize = getResources().getDimensionPixelSize(R.dimen.publish_photo_thumbnail_size);
 
         if (savedInstanceState == null) {
@@ -113,7 +118,7 @@ public class PublishActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_publish) {
             Log.d(TAG, "saveImage: now send email through composeEmail");
-            composeEmail(new String[]{SHARKNAPALESTINE_GMAIL_COM},"Email from sharkna",photoUri);
+            sendGmail(photoUri);
             bringMainActivityToTop();
             return true;
         } else {
@@ -152,33 +157,49 @@ public class PublishActivity extends BaseActivity {
         }
     }
 
+    @SuppressWarnings("unused")
     public void composeEmail(final String[] addresses, final String subject, final Uri attachment) {
         new Thread(new Runnable() {
             @Override
             public void run() {
                 Intent emailIntent = new Intent(Intent.ACTION_SEND);
-//        emailIntent.setType("application/image");
                 emailIntent.setType("text/plain");
                 emailIntent.setData(Uri.parse("mailto:"));
                 emailIntent.putExtra(Intent.EXTRA_EMAIL, addresses);
                 emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
                 emailIntent.putExtra(Intent.EXTRA_STREAM, attachment);
-//        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL, new String[]{SHARKNAPALESTINE_GMAIL_COM});
-//        emailIntent.putExtra(android.content.Intent.EXTRA_SUBJECT,"Test Subject");
                 emailIntent.putExtra(Intent.EXTRA_TEXT, "From My App");
-//        emailIntent.putExtra(Intent.EXTRA_STREAM, Uri.parse("file:///mnt/sdcard/Myimage.jpeg"));
                 try {
                     if (emailIntent.resolveActivity(getPackageManager()) != null) {
                         startActivity(emailIntent);
                         Log.d(TAG, "composeEmail:========================== Email sent");
                     }
                     Log.d(TAG, "composeEmail:==========================  Email not sent");
-//            startActivity(Intent.createChooser(i, "Send mail..."));
                 } catch (android.content.ActivityNotFoundException ex) {
                     Log.d(TAG, "composeEmail:========================== Email There are no email clients installed");
                 }
             }
         }).start();
+    }
 
+
+    private void sendGmail(final Uri photoUri){
+        new Thread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    Log.d(TAG, "run: send email ***********************************");
+                    GMailSender sender = new GMailSender(SHARKNAPALESTINE_GMAIL_COM,
+                            PASSWORD);
+                    sender.addAttachment(photoUri.getEncodedPath());
+                    sender.sendMail("Hello from JavaMail", "Body from JavaMail",
+                            SHARKNAPALESTINE_GMAIL_COM, RECIPIENTS);
+                } catch (Exception e) {
+                    Log.e("SendMail", e.getMessage(), e);
+                }
+            }
+
+        }).start();
     }
 }

@@ -18,7 +18,6 @@ import android.view.animation.OvershootInterpolator;
 
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
-import com.sharkna.khaled.sharkna.account.GMailSender;
 import com.sharkna.khaled.sharkna.account.GmailAccount;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedAdapter;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedItemAnimator;
@@ -89,19 +88,14 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         SharedPreferences account = getSharedPreferences(GMAIL_PREFERENCE, 0);
         String accountName = account.getString(NAME, null);
         String accountEmail = account.getString(EMAIL, null);
-        Log.d(TAG, "onCreate: accountEmail"+accountEmail);
-        Log.d(TAG, "onCreate: accountName"+accountName);
         if (accountEmail != null) {
             Log.d(TAG, "onCreate: accountEmail"+accountEmail);
             Log.d(TAG, "onCreate: accountName"+accountName);
-//            sendGmail();
             GmailAccount gmailAccount = GmailAccount.getInstance();
             gmailAccount.setEmail(accountEmail);
             gmailAccount.setName(accountName);
         }else{
             Intent SignInIntent = new Intent(this, SignInActivity.class);
-//            String message = editText.getText().toString();
-//            intent.putExtra(EXTRA_MESSAGE, message);
             startActivity(SignInIntent);
         }
         setupFeed();
@@ -256,25 +250,5 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 
     public void showLikedSnackbar() {
         Snackbar.make(clContent, "Liked!", Snackbar.LENGTH_SHORT).show();
-    }
-
-    //to send email on gmail
-    private void sendGmail(){
-        new Thread(new Runnable() {
-
-            @Override
-            public void run() {
-                try {
-                    Log.d(TAG, "run: send email ***********************************");
-                    GMailSender sender = new GMailSender("sharknapalestine@gmail.com",
-                            "sharkna12345");
-                    sender.sendMail("Hello from JavaMail", "Body from JavaMail",
-                            "sharknapalestine@gmail.com", "khaled.alqerem@gmail.com");
-                } catch (Exception e) {
-                    Log.e("SendMail", e.getMessage(), e);
-                }
-            }
-
-        }).start();
     }
 }
