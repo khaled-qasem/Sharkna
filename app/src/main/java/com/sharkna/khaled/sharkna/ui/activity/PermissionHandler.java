@@ -69,13 +69,10 @@ class PermissionHandler {
     void handleRequest(int requestCode, String[] permissions, int[] grantResults, Context context) {
         switch (requestCode) {
             case DEFAULT_PERMISSION_REQUEST_CODE:
-                if(requestCode==200){
-                    Log.d(TAG, "onRequestPermissionsResult: ----------------------------------------------------------200");
-                }else{
-                    Log.d(TAG, "onRequestPermissionsResult: ----------------------------------------------------------500");
-
-                }
-
+                Log.d(TAG, "onRequestPermissionsResult: ----------------------------------------------------------200");
+                break;
+            default:
+                Log.d(TAG, "onRequestPermissionsResult: ----------------------------------------------------------500");
                break;
         }
     }

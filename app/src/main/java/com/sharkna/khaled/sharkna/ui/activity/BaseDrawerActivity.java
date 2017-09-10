@@ -19,6 +19,8 @@ import butterknife.BindView;
 
 /**
  * Created by Khaled on 3.7.17.
+ * description:
+ * assumption:
  */
 public class BaseDrawerActivity extends BaseActivity {
 

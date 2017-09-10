@@ -266,10 +266,10 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             public void run() {
                 try {
                     Log.d(TAG, "run: send email ***********************************");
-                    GMailSender sender = new GMailSender("khaled.alqerem@gmail.com",
-                            "password");
+                    GMailSender sender = new GMailSender("sharknapalestine@gmail.com",
+                            "sharkna12345");
                     sender.sendMail("Hello from JavaMail", "Body from JavaMail",
-                            "another email", "sharknapalestine@gmail.com");
+                            "sharknapalestine@gmail.com", "khaled.alqerem@gmail.com");
                 } catch (Exception e) {
                     Log.e("SendMail", e.getMessage(), e);
                 }
