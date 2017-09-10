@@ -70,13 +70,13 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 
         Intent intent = getIntent();
         if (intent != null) {
-            String Gemail = intent.getStringExtra(EMAIL);
-            String Gname = intent.getStringExtra(EMAIL);
-            if (Gname != null && Gemail!=null) {
+            String gEmail = intent.getStringExtra(EMAIL);
+            String gName = intent.getStringExtra(EMAIL);
+            if (gName != null && gEmail!=null) {
                 SharedPreferences gmailAccount = getSharedPreferences(GMAIL_PREFERENCE, 0);
                 SharedPreferences.Editor editor = gmailAccount.edit();
-                editor.putString(NAME, Gname);
-                editor.putString(EMAIL, Gemail);
+                editor.putString(NAME, gName);
+                editor.putString(EMAIL, gEmail);
 
                 // Commit the edits!
                 editor.apply();

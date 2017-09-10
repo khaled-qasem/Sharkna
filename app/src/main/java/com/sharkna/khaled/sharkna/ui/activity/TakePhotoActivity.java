@@ -287,9 +287,7 @@ public class TakePhotoActivity extends BaseActivity implements RevealBackgroundV
         } else if (currentState == STATE_SETUP_PHOTO) {
 
             vUpperPanel.setInAnimation(this, R.anim.slide_in_from_left);
-//            vLowerPanel.setInAnimation(this, R.anim.slide_in_from_left);
             vUpperPanel.setOutAnimation(this, R.anim.slide_out_to_right);
-//            vLowerPanel.setOutAnimation(this, R.anim.slide_out_to_right);
             vLowerPanel.setVisibility(View.INVISIBLE);
             ivTakenPhoto.setVisibility(View.VISIBLE);
         }

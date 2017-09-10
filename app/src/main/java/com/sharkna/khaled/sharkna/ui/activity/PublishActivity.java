@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ToggleButton;
 
@@ -40,6 +41,8 @@ public class PublishActivity extends BaseActivity {
     ToggleButton tbDirect;
     @BindView(R.id.ivPhoto)
     ImageView ivPhoto;
+    @BindView(R.id.etDescription)
+    EditText editTextDescription;
 
     private boolean propagatingToggleState = false;
     private Uri photoUri;
@@ -118,7 +121,8 @@ public class PublishActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == R.id.action_publish) {
             Log.d(TAG, "saveImage: now send email through composeEmail");
-            sendGmail(photoUri);
+            String description = editTextDescription.getText().toString();
+            sendGmail(photoUri, description);
             bringMainActivityToTop();
             return true;
         } else {
@@ -172,28 +176,24 @@ public class PublishActivity extends BaseActivity {
                 try {
                     if (emailIntent.resolveActivity(getPackageManager()) != null) {
                         startActivity(emailIntent);
-                        Log.d(TAG, "composeEmail:========================== Email sent");
                     }
-                    Log.d(TAG, "composeEmail:==========================  Email not sent");
                 } catch (android.content.ActivityNotFoundException ex) {
-                    Log.d(TAG, "composeEmail:========================== Email There are no email clients installed");
                 }
             }
         }).start();
     }
 
 
-    private void sendGmail(final Uri photoUri){
+    private void sendGmail(final Uri photoUri, final String description) {
         new Thread(new Runnable() {
 
             @Override
             public void run() {
                 try {
-                    Log.d(TAG, "run: send email ***********************************");
                     GMailSender sender = new GMailSender(SHARKNAPALESTINE_GMAIL_COM,
                             PASSWORD);
                     sender.addAttachment(photoUri.getEncodedPath());
-                    sender.sendMail("Hello from JavaMail", "Body from JavaMail",
+                    sender.sendMail("Hello", description,
                             SHARKNAPALESTINE_GMAIL_COM, RECIPIENTS);
                 } catch (Exception e) {
                     Log.e("SendMail", e.getMessage(), e);
