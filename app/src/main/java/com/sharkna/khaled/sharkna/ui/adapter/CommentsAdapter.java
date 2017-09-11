@@ -30,6 +30,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     private boolean animationsLocked = false;
     private boolean delayEnterAnimation = true;
+    private String commentText="";
 
     public CommentsAdapter(Context context) {
         this.context = context;
@@ -46,17 +47,22 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         runEnterAnimation(viewHolder.itemView, position);
         CommentViewHolder holder = (CommentViewHolder) viewHolder;
-        switch (position % 3) {
-            case 0:
-                holder.tvComment.setText("Lorem ipsum dolor sit amet, consectetur adipisicing elit.");
-                break;
-            case 1:
-                holder.tvComment.setText("Cupcake ipsum dolor sit amet bear claw.");
-                break;
-            case 2:
-                holder.tvComment.setText("Cupcake ipsum dolor sit. Amet gingerbread cupcake. Gummies ice cream dessert icing marzipan apple pie dessert sugar plum.");
-                break;
+        if(position == itemsCount-1 && !commentText.isEmpty()){
+            holder.tvComment.setText(commentText);
+        }else{
+            switch (position % 3) {
+                case 0:
+                    holder.tvComment.setText("Here we can add first comment ");
+                    break;
+                case 1:
+                    holder.tvComment.setText("Here we can add second comment ");
+                    break;
+                case 2:
+                    holder.tvComment.setText("Here we can add third comment");
+                    break;
+            }
         }
+
 
         Picasso.with(context)
                 .load(R.drawable.ic_launcher)
@@ -101,6 +107,10 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void addItem() {
         itemsCount++;
         notifyItemInserted(itemsCount - 1);
+    }
+
+    public void setCommentText(String commentText) {
+        this.commentText = commentText;
     }
 
     public void setAnimationsLocked(boolean animationsLocked) {

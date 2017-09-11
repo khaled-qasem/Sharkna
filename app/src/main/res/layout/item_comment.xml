@@ -25,7 +25,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginRight="16dp"
             android:layout_weight="1"
-            android:text="Lorem ipsum dolor sit amet" />
+            android:text="In this text view you can add any comment" />
     </LinearLayout>
 
     <View

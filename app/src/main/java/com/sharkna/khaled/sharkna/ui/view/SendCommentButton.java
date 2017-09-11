@@ -10,6 +10,8 @@ import com.sharkna.khaled.sharkna.R;
 
 /**
  * Created by Khaled on 16.6.17.
+ * Description:
+ * assumption:
  */
 public class SendCommentButton extends ViewAnimator implements View.OnClickListener {
     public static final int STATE_SEND = 0;

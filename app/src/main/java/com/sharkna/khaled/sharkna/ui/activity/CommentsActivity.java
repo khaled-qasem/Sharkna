@@ -24,6 +24,8 @@ import butterknife.BindView;
 
 /**
  * Created by Khaled on 10.6.17.
+ * description:
+ * assumption:
  */
 public class CommentsActivity extends BaseDrawerActivity implements SendCommentButton.OnSendClickListener {
     public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
@@ -132,10 +134,10 @@ public class CommentsActivity extends BaseDrawerActivity implements SendCommentB
     public void onSendClickListener(View v) {
         if (validateComment()) {
             commentsAdapter.addItem();
+            commentsAdapter.setCommentText(etComment.getText().toString());
             commentsAdapter.setAnimationsLocked(false);
             commentsAdapter.setDelayEnterAnimation(false);
             rvComments.smoothScrollBy(0, rvComments.getChildAt(0).getHeight() * commentsAdapter.getItemCount());
-
             etComment.setText(null);
             btnSendComment.setCurrentState(SendCommentButton.STATE_DONE);
         }
@@ -146,7 +148,6 @@ public class CommentsActivity extends BaseDrawerActivity implements SendCommentB
             btnSendComment.startAnimation(AnimationUtils.loadAnimation(this, R.anim.shake_error));
             return false;
         }
-
         return true;
     }
 }

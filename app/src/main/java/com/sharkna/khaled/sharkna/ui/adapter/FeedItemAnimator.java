@@ -7,6 +7,7 @@ import android.animation.ObjectAnimator;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
@@ -33,6 +34,7 @@ public class FeedItemAnimator extends DefaultItemAnimator {
     Map<RecyclerView.ViewHolder, AnimatorSet> heartAnimationsMap = new HashMap<>();
 
     private int lastAddAnimatedItem = -2;
+    private String TAG = FeedItemAnimator.class.getName();
 
     @Override
     public boolean canReuseUpdatedViewHolder(RecyclerView.ViewHolder viewHolder) {
@@ -132,7 +134,13 @@ public class FeedItemAnimator extends DefaultItemAnimator {
         bounceAnimY.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                holder.btnLike.setImageResource(R.drawable.ic_heart_red);
+                if (holder.getFeedItem().isLiked) {
+                    Log.d(TAG, "onAnimationStart: liked----------------------");
+                    holder.btnLike.setImageResource(R.drawable.ic_heart_red);
+                } else {
+                    Log.d(TAG, "onAnimationStart: not liked------------------");
+                    holder.btnLike.setImageResource(R.drawable.ic_heart_outline_grey);
+                }
             }
 
             @Override
