@@ -71,7 +71,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         Intent intent = getIntent();
         if (intent != null) {
             String gEmail = intent.getStringExtra(EMAIL);
-            String gName = intent.getStringExtra(EMAIL);
+            String gName = intent.getStringExtra(NAME);
             if (gName != null && gEmail!=null) {
                 SharedPreferences gmailAccount = getSharedPreferences(GMAIL_PREFERENCE, 0);
                 SharedPreferences.Editor editor = gmailAccount.edit();
@@ -250,5 +250,12 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 
     public void showLikedSnackbar() {
         Snackbar.make(clContent, "Liked!", Snackbar.LENGTH_SHORT).show();
+    }
+    public void showLikedSnackbar(boolean liked) {
+        if (liked) {
+            Snackbar.make(clContent, "Liked!", Snackbar.LENGTH_SHORT).show();
+        }else{
+            Snackbar.make(clContent, "DisLiked!", Snackbar.LENGTH_SHORT).show();
+        }
     }
 }

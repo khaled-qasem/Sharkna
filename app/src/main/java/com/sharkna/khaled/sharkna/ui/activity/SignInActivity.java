@@ -139,6 +139,7 @@ public class SignInActivity extends AppCompatActivity implements
             Intent intent = new Intent(this, MainActivity.class);
             String accountName = acct.getDisplayName();
             String accountEmail = acct.getEmail();
+
             intent.putExtra(NAME,accountName);
             intent.putExtra(EMAIL,accountEmail);
             startActivity(intent);

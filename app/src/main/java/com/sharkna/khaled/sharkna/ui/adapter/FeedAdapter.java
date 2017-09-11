@@ -80,10 +80,21 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             @Override
             public void onClick(View v) {
                 int adapterPosition = cellFeedViewHolder.getAdapterPosition();
-                feedItems.get(adapterPosition).likesCount++;
+                FeedItem feedItem = feedItems.get(adapterPosition);
+                if(liked){
+                    feedItems.get(adapterPosition).likesCount--;
+                    liked = !liked;
+                    feedItem.isLiked = liked;
+                }else{
+                    feedItems.get(adapterPosition).likesCount++;
+                    liked = !liked;
+                    feedItem.isLiked = liked;
+                }
+                feedItems.set(adapterPosition, feedItem);
                 notifyItemChanged(adapterPosition, ACTION_LIKE_IMAGE_CLICKED);
                 if (context instanceof MainActivity) {
-                    ((MainActivity) context).showLikedSnackbar();
+//                    ((MainActivity) context).showLikedSnackbar();
+                    ((MainActivity) context).showLikedSnackbar(liked);
                 }
             }
         });
@@ -104,7 +115,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 feedItems.set(adapterPosition, feedItem);
                 notifyItemChanged(adapterPosition, ACTION_LIKE_BUTTON_CLICKED);
                 if (context instanceof MainActivity) {
-                    ((MainActivity) context).showLikedSnackbar();
+//                    ((MainActivity) context).showLikedSnackbar();
+                    ((MainActivity) context).showLikedSnackbar(liked);
                 }
             }
         });
@@ -213,7 +225,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             ivFeedCenter.setImageResource(adapterPosition % 2 == 0 ? R.drawable.ram1 : R.drawable.ram2);
             ivFeedBottom.setImageResource(adapterPosition % 2 == 0 ? R.drawable.img_feed_bottom_1 : R.drawable.img_feed_bottom_2);
             btnLike.setImageResource(feedItem.isLiked ? R.drawable.ic_heart_red : R.drawable.ic_heart_outline_grey);
-
             tsLikesCounter.setCurrentText(vImageRoot.getResources().getQuantityString(
                     R.plurals.likes_count, feedItem.likesCount, feedItem.likesCount
             ));
