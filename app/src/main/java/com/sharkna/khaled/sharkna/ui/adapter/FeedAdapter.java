@@ -266,16 +266,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             int adapterPosition = getAdapterPosition();
 //            ivFeedCenter.setImageResource(adapterPosition % 2 == 0 ? R.drawable.img_feed_center_1 : R.drawable.img_feed_center_2);
 //            /storage/emulated/0/DCIM/Photo_20170912_225542.jpg
-            if (adapterPosition == 0) {
-                if (feedItem.photoUri != null) {
+            if (adapterPosition == 0 &&feedItem.photoUri != null) {
                     Log.d(TAG, "bindView: ==========================>>>>>"+feedItem.photoUri.toString());
                     ivFeedCenter.setImageURI(feedItem.photoUri);
-                }
-                /*if(feedItem.photoUri!=null){
-                    ivFeedCenter.setImageURI(feedItem.photoUri);
-                }else{
-                    ivFeedCenter.setImageResource(R.drawable.ram1);
-                }*/
             }else {
                 ivFeedCenter.setImageResource(adapterPosition % 2 == 0 ? R.drawable.ram1 : R.drawable.ram2);
             }
