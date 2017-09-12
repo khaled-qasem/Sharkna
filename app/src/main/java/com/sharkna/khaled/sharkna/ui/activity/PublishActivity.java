@@ -34,6 +34,7 @@ public class PublishActivity extends BaseActivity {
     public static final String SHARKNAPALESTINE_GMAIL_COM = "sharknapalestine@gmail.com";
     public static final String PASSWORD = "sharkna12345";
     public static final String RECIPIENTS = "khaled.alqerem@gmail.com";
+    public static final String PATH = "path";
 
 
     @BindView(R.id.tbFollowers)
@@ -48,7 +49,7 @@ public class PublishActivity extends BaseActivity {
     private boolean propagatingToggleState = false;
     private Uri photoUri;
     private int photoSize;
-    GmailAccount gmailAccount ;
+    GmailAccount gmailAccount;
 
     public static void openWithPhotoUri(Activity openingActivity, Uri photoUri) {
         Intent intent = new Intent(openingActivity, PublishActivity.class);
@@ -135,8 +136,9 @@ public class PublishActivity extends BaseActivity {
 
     private void bringMainActivityToTop() {
         Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        intent.setAction(MainActivity.ACTION_SHOW_LOADING_ITEM);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+//        intent.setAction(MainActivity.ACTION_SHOW_LOADING_ITEM);
+        intent.putExtra(PATH, photoUri.toString());
         startActivity(intent);
     }
 
@@ -195,8 +197,9 @@ public class PublishActivity extends BaseActivity {
                 try {
                     GMailSender sender = new GMailSender(SHARKNAPALESTINE_GMAIL_COM,
                             PASSWORD);
+//                    Log.d(TAG, "run: ------------------------"+photoUri.getEncodedPath());
                     sender.addAttachment(photoUri.getEncodedPath());
-                    sender.sendMail("Sharkna", description+"\n\n"+gmailAccount.getName()+"\n"+gmailAccount.getEmail(),
+                    sender.sendMail("Sharkna", description + "\n\n" + gmailAccount.getName() + "\n" + gmailAccount.getEmail(),
                             SHARKNAPALESTINE_GMAIL_COM, RECIPIENTS);
                 } catch (Exception e) {
                     Log.e("SendMail", e.getMessage(), e);

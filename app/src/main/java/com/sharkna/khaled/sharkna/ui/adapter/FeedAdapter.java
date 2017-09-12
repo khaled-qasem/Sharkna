@@ -1,8 +1,10 @@
 package com.sharkna.khaled.sharkna.ui.adapter;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +33,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public static final int VIEW_TYPE_DEFAULT = 1;
     public static final int VIEW_TYPE_LOADER = 2;
+    private static final String TAG = FeedAdapter.class.getName();
 
     private final List<FeedItem> feedItems = new ArrayList<>();
 
@@ -179,6 +182,30 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             notifyDataSetChanged();
         }
     }
+    public void updateItems(boolean animated,Uri photoUri) {
+        feedItems.clear();
+        feedItems.addAll(Arrays.asList(
+                new FeedItem(33, false),
+                new FeedItem(1, false),
+                new FeedItem(223, false),
+                new FeedItem(2, false),
+                new FeedItem(6, false),
+                new FeedItem(8, false),
+                new FeedItem(99, false)
+        ));
+        if(photoUri!=null){
+            int adapterPosition = 0;
+            FeedItem feedItem = feedItems.get(adapterPosition);
+            feedItem.photoUri = photoUri;
+            Log.d(TAG, "setPhotoUri: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"+photoUri.getEncodedPath());
+            feedItems.set(adapterPosition, feedItem);
+        }
+        if (animated) {
+            notifyItemRangeInserted(0, feedItems.size());
+        } else {
+            notifyDataSetChanged();
+        }
+    }
 
     public void setOnFeedItemClickListener(OnFeedItemClickListener onFeedItemClickListener) {
         this.onFeedItemClickListener = onFeedItemClickListener;
@@ -189,7 +216,23 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         notifyItemChanged(0);
     }
 
+    public void setPhotoUri(Uri photoUri) {
+        int adapterPosition = 0;
+        FeedItem feedItem = feedItems.get(adapterPosition);
+        if(photoUri!=null){
+            feedItem.photoUri = photoUri;
+            Log.d(TAG, "setPhotoUri: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"+photoUri.getEncodedPath());
+            feedItems.set(adapterPosition, feedItem);
+        }
+        /*notifyItemChanged(adapterPosition, ACTION_LIKE_BUTTON_CLICKED);
+        if (context instanceof MainActivity) {
+//                    ((MainActivity) context).showLikedSnackbar();
+            ((MainActivity) context).showLikedSnackbar(liked);
+        }*/
+    }
+
     public static class CellFeedViewHolder extends RecyclerView.ViewHolder {
+        private static final String TAG = CellFeedViewHolder.class.getName();
         @BindView(R.id.ivFeedCenter)
         ImageView ivFeedCenter;
         @BindView(R.id.ivFeedBottom)
@@ -222,7 +265,20 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.feedItem = feedItem;
             int adapterPosition = getAdapterPosition();
 //            ivFeedCenter.setImageResource(adapterPosition % 2 == 0 ? R.drawable.img_feed_center_1 : R.drawable.img_feed_center_2);
-            ivFeedCenter.setImageResource(adapterPosition % 2 == 0 ? R.drawable.ram1 : R.drawable.ram2);
+//            /storage/emulated/0/DCIM/Photo_20170912_225542.jpg
+            if (adapterPosition == 0) {
+                if (feedItem.photoUri != null) {
+                    Log.d(TAG, "bindView: ==========================>>>>>"+feedItem.photoUri.toString());
+                    ivFeedCenter.setImageURI(feedItem.photoUri);
+                }
+                /*if(feedItem.photoUri!=null){
+                    ivFeedCenter.setImageURI(feedItem.photoUri);
+                }else{
+                    ivFeedCenter.setImageResource(R.drawable.ram1);
+                }*/
+            }else {
+                ivFeedCenter.setImageResource(adapterPosition % 2 == 0 ? R.drawable.ram1 : R.drawable.ram2);
+            }
             ivFeedBottom.setImageResource(adapterPosition % 2 == 0 ? R.drawable.img_feed_bottom_1 : R.drawable.img_feed_bottom_2);
             btnLike.setImageResource(feedItem.isLiked ? R.drawable.ic_heart_red : R.drawable.ic_heart_outline_grey);
             tsLikesCounter.setCurrentText(vImageRoot.getResources().getQuantityString(
@@ -253,6 +309,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     public static class FeedItem {
         public int likesCount;
         public boolean isLiked;
+        public Uri photoUri;
 
         public FeedItem(int likesCount, boolean isLiked) {
             this.likesCount = likesCount;

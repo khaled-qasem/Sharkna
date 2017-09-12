@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.CoordinatorLayout;
@@ -39,6 +40,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final String NAME = "name";
     private static final String EMAIL = "email";
+    public static final String PATH = "path";
 
     @BindView(R.id.rvFeed)
     RecyclerView rvFeed;
@@ -49,6 +51,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 
     private FeedAdapter feedAdapter;
 
+    private Uri photoUri;
     private boolean pendingIntroAnimation;
 
 
@@ -72,6 +75,12 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         if (intent != null) {
             String gEmail = intent.getStringExtra(EMAIL);
             String gName = intent.getStringExtra(NAME);
+            String uri = intent.getStringExtra(PATH);
+            if (uri != null) {
+                photoUri = Uri.parse(intent.getStringExtra(PATH));
+//                Log.d(TAG, "onCreate: ==========================????"+photoUri.getEncodedPath().toString());
+            }
+
             if (gName != null && gEmail!=null) {
                 SharedPreferences gmailAccount = getSharedPreferences(GMAIL_PREFERENCE, 0);
                 SharedPreferences.Editor editor = gmailAccount.edit();
@@ -103,6 +112,8 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         if (savedInstanceState == null) {
             pendingIntroAnimation = true;
         } else {
+//            Log.d(TAG, "onCreate: +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//            feedAdapter.setPhotoUri(photoUri);
             feedAdapter.updateItems(false);
         }
     }
@@ -117,6 +128,8 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         rvFeed.setLayoutManager(linearLayoutManager);
 
         feedAdapter = new FeedAdapter(this);
+//        Log.d(TAG, "onCreate: +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//        feedAdapter.setPhotoUri(photoUri);
         feedAdapter.setOnFeedItemClickListener(this);
         rvFeed.setAdapter(feedAdapter);
         rvFeed.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -140,6 +153,8 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
+                Log.d(TAG, "run: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+//                feedAdapter.setPhotoUri(photoUri);
                 rvFeed.smoothScrollToPosition(0);
                 feedAdapter.showLoadingView();
             }
@@ -192,7 +207,13 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
                 .setStartDelay(300)
                 .setDuration(ANIM_DURATION_FAB)
                 .start();
-        feedAdapter.updateItems(true);
+//        Log.d(TAG, "onCreate: +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
+//        feedAdapter.setPhotoUri(photoUri);
+        if (photoUri != null) {
+            feedAdapter.updateItems(true,photoUri);
+        }else{
+            feedAdapter.updateItems(true);
+        }
     }
 
     @Override
