@@ -12,6 +12,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextSwitcher;
+import android.widget.TextView;
 
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.ui.activity.MainActivity;
@@ -236,7 +237,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         @BindView(R.id.ivFeedCenter)
         ImageView ivFeedCenter;
         @BindView(R.id.ivFeedBottom)
-        ImageView ivFeedBottom;
+        TextView ivFeedBottom;
         @BindView(R.id.btnComments)
         ImageButton btnComments;
         @BindView(R.id.btnLike)
@@ -272,7 +273,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             }else {
                 ivFeedCenter.setImageResource(adapterPosition % 2 == 0 ? R.drawable.ram1 : R.drawable.ram2);
             }
-            ivFeedBottom.setImageResource(adapterPosition % 2 == 0 ? R.drawable.img_feed_bottom_1 : R.drawable.img_feed_bottom_2);
+            // TODO: 10/9/2017 set ivFeedBottom
+//            ivFeedBottom.setImageResource(adapterPosition % 2 == 0 ? R.drawable.img_feed_bottom_1 : R.drawable.img_feed_bottom_2);
+            ivFeedBottom.setText("     this is just a description");
+            ivFeedBottom.setTextSize(18f);
             btnLike.setImageResource(feedItem.isLiked ? R.drawable.ic_heart_red : R.drawable.ic_heart_outline_grey);
             tsLikesCounter.setCurrentText(vImageRoot.getResources().getQuantityString(
                     R.plurals.likes_count, feedItem.likesCount, feedItem.likesCount

@@ -18,6 +18,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_feed_top" />
+        <TextView
+            android:id="@+id/ivFeedBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <com.sharkna.khaled.sharkna.ui.view.SquaredFrameLayout
             android:id="@+id/vImageRoot"
@@ -59,10 +63,15 @@
 
         </com.sharkna.khaled.sharkna.ui.view.SquaredFrameLayout>
 
-        <ImageView
+       <!-- <ImageView
             android:id="@+id/ivFeedBottom"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content" />-->
+        <!--<TextView
+            android:id="@+id/ivFeedBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />-->
+
 
         <LinearLayout
             android:layout_width="match_parent"
