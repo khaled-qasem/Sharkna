@@ -8,8 +8,8 @@ android {
         applicationId "com.sharkna.khaled.sharkna"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 1
-        versionName "0.0.2-login"
+        versionCode 2
+        versionName "0.0.3-firebase"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
