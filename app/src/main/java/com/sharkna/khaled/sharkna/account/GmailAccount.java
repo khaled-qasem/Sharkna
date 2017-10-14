@@ -9,8 +9,9 @@ package com.sharkna.khaled.sharkna.account;
 // TODO: 8/17/2017 make this class singleton
 public final class GmailAccount {
 
-    private String name;
-    private String email;
+    private String userName;
+    private String userEmail;
+    private String userPhotoURL;
     private static volatile GmailAccount instance;
 
     private GmailAccount() {
@@ -26,19 +27,27 @@ public final class GmailAccount {
         }
         return instance;
     }
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
-    public String getEmail() {
-        return email;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+
+    public String getUserPhotoURL() {
+        return userPhotoURL;
+    }
+
+    public void setUserPhotoURL(String userPhotoURL) {
+        this.userPhotoURL = userPhotoURL;
     }
 }
