@@ -20,6 +20,7 @@ import android.view.animation.OvershootInterpolator;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
 import com.sharkna.khaled.sharkna.account.GmailAccount;
@@ -59,13 +60,15 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 
     private String mUsername;
     private String mPhotoUrl;
-    private SharedPreferences mSharedPreferences;
+    private String mEmail;
 
+    private SharedPreferences mSharedPreferences;
     // Firebase instance variables
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
-    private String mEmail;
-
+    private DatabaseReference mFirebaseDatabaseReference;
+//    private FirebaseRecyclerAdapter<Post, MessageViewHolder>
+//            mFirebaseAdapter;
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -119,43 +122,17 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             String uri = intent.getStringExtra(PATH);
             if (uri != null) {
                 photoUri = Uri.parse(intent.getStringExtra(PATH));
-//                Log.d(TAG, "onCreate: ==========================????"+photoUri.getEncodedPath().toString());
             }
-
-           /* if (gName != null && gEmail!=null) {
-                SharedPreferences gmailAccount = getSharedPreferences(GMAIL_PREFERENCE, 0);
-                SharedPreferences.Editor editor = gmailAccount.edit();
-                editor.putString(NAME, gName);
-                editor.putString(EMAIL, gEmail);
-
-                // Commit the edits!
-                editor.apply();
-            }*/
         }
 
         //add preferences here
         // Restore preferences
         SharedPreferences account = getSharedPreferences(GMAIL_PREFERENCE, 0);
-//        String accountName = account.getString(NAME, null);
-//        String accountEmail = account.getString(EMAIL, null);
-       /* if (accountEmail != null) {
-            Log.d(TAG, "onCreate: accountEmail"+accountEmail);
-            Log.d(TAG, "onCreate: accountName"+accountName);
-          *//*  GmailAccount gmailAccount = GmailAccount.getInstance();
-            gmailAccount.setUserEmail(accountEmail);
-            gmailAccount.setUserName(accountName);
-            gmailAccount.setUserPhotoURL(mPhotoUrl);*//*
-        }else{
-            Intent SignInIntent = new Intent(this, SignInActivity.class);
-            startActivity(SignInIntent);
-        }*/
         setupFeed();
 
         if (savedInstanceState == null) {
             pendingIntroAnimation = true;
         } else {
-//            Log.d(TAG, "onCreate: +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
-//            feedAdapter.setPhotoUri(photoUri);
             feedAdapter.updateItems(false);
         }
     }
@@ -170,7 +147,6 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         rvFeed.setLayoutManager(linearLayoutManager);
 
         feedAdapter = new FeedAdapter(this);
-//        Log.d(TAG, "onCreate: +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 //        feedAdapter.setPhotoUri(photoUri);
         feedAdapter.setOnFeedItemClickListener(this);
         rvFeed.setAdapter(feedAdapter);
@@ -322,6 +298,9 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             Snackbar.make(clContent, "DisLiked!", Snackbar.LENGTH_SHORT).show();
         }
     }
+
+
+
 
     // TODO: 10/14/2017 Handle sign out from firebase
    /* @Override
