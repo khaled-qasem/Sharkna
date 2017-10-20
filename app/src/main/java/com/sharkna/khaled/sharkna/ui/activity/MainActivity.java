@@ -20,6 +20,7 @@ import android.view.animation.OvershootInterpolator;
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
 import com.sharkna.khaled.sharkna.account.GmailAccount;
+import com.sharkna.khaled.sharkna.model.OKHttpGetRequest;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedAdapter;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedItemAnimator;
 import com.sharkna.khaled.sharkna.ui.view.FeedContextMenu;
@@ -91,7 +92,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
                 editor.apply();
             }
         }
-
+        GmailAccount gmailAccount = GmailAccount.getInstance();
         //add preferences here
         // Restore preferences
         SharedPreferences account = getSharedPreferences(GMAIL_PREFERENCE, 0);
@@ -100,19 +101,30 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         if (accountEmail != null) {
             Log.d(TAG, "onCreate: accountEmail"+accountEmail);
             Log.d(TAG, "onCreate: accountName"+accountName);
-            GmailAccount gmailAccount = GmailAccount.getInstance();
+//            GmailAccount gmailAccount = GmailAccount.getInstance();
             gmailAccount.setEmail(accountEmail);
             gmailAccount.setName(accountName);
         }else{
             Intent SignInIntent = new Intent(this, SignInActivity.class);
             startActivity(SignInIntent);
         }
+
+        String userName = "khaled";
+        String userPassword = "12345";
+        String type = "login";
+
+//        LoginBackWorker loginBackWorker = new LoginBackWorker(this);
+//        loginBackWorker.execute(type,userName, userPassword);
+        OKHttpGetRequest okHttpGetRequest = new OKHttpGetRequest();
+        okHttpGetRequest.execute();
+//        System.out.println(response);
+
+//            ------------------------------------------------------------
         setupFeed();
 
         if (savedInstanceState == null) {
             pendingIntroAnimation = true;
         } else {
-//            Log.d(TAG, "onCreate: +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 //            feedAdapter.setPhotoUri(photoUri);
             feedAdapter.updateItems(false);
         }
