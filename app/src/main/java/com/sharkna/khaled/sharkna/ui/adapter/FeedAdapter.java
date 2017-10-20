@@ -15,6 +15,7 @@ import android.widget.TextSwitcher;
 import android.widget.TextView;
 
 import com.sharkna.khaled.sharkna.R;
+import com.sharkna.khaled.sharkna.model.FeedItem;
 import com.sharkna.khaled.sharkna.ui.activity.MainActivity;
 import com.sharkna.khaled.sharkna.ui.view.LoadingFeedItemView;
 
@@ -168,6 +169,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     public void updateItems(boolean animated) {
         feedItems.clear();
+        // TODO: 10/20/2017 get posts from database here
+
         feedItems.addAll(Arrays.asList(
                 new FeedItem(33, false),
                 new FeedItem(1, false),
@@ -303,7 +306,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         }
     }
 
-    public static class FeedItem {
+  /*  public static class FeedItem {
         public int likesCount;
         public boolean isLiked;
         public Uri photoUri;
@@ -312,7 +315,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             this.likesCount = likesCount;
             this.isLiked = isLiked;
         }
-    }
+    }*/
 
     public interface OnFeedItemClickListener {
         void onCommentsClick(View v, int position);
