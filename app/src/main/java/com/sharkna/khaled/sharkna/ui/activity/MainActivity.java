@@ -22,7 +22,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
-import com.sharkna.khaled.sharkna.account.GmailAccount;
+import com.sharkna.khaled.sharkna.account.CurrentAccount;
 import com.sharkna.khaled.sharkna.model.db_utils.OKHttpGetRequest;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedAdapter;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedItemAnimator;
@@ -101,10 +101,10 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             mEmail = mFirebaseUser.getEmail();
             if (mFirebaseUser.getPhotoUrl() != null) {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-                GmailAccount gmailAccount = GmailAccount.getInstance();
-                gmailAccount.setUserEmail(mEmail);
-                gmailAccount.setUserName(mUsername);
-                gmailAccount.setUserPhotoURL(mPhotoUrl);
+                CurrentAccount currentAccount = CurrentAccount.getInstance();
+                currentAccount.setUserEmail(mEmail);
+                currentAccount.setUserName(mUsername);
+                currentAccount.setUserPhotoURL(mPhotoUrl);
             }
         }
 /*
@@ -124,8 +124,8 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             }
 
            /* if (gName != null && gEmail!=null) {
-                SharedPreferences gmailAccount = getSharedPreferences(GMAIL_PREFERENCE, 0);
-                SharedPreferences.Editor editor = gmailAccount.edit();
+                SharedPreferences currentAccount = getSharedPreferences(GMAIL_PREFERENCE, 0);
+                SharedPreferences.Editor editor = currentAccount.edit();
                 editor.putString(NAME, gName);
                 editor.putString(EMAIL, gEmail);
 
@@ -142,10 +142,10 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
        /* if (accountEmail != null) {
             Log.d(TAG, "onCreate: accountEmail"+accountEmail);
             Log.d(TAG, "onCreate: accountName"+accountName);
-          *//*  GmailAccount gmailAccount = GmailAccount.getInstance();
-            gmailAccount.setUserEmail(accountEmail);
-            gmailAccount.setUserName(accountName);
-            gmailAccount.setUserPhotoURL(mPhotoUrl);*//*
+          *//*  CurrentAccount currentAccount = CurrentAccount.getInstance();
+            currentAccount.setUserEmail(accountEmail);
+            currentAccount.setUserName(accountName);
+            currentAccount.setUserPhotoURL(mPhotoUrl);*//*
         }else{
             Intent SignInIntent = new Intent(this, SignInActivity.class);
             startActivity(SignInIntent);

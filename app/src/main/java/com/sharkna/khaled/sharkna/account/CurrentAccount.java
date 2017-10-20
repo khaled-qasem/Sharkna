@@ -7,21 +7,21 @@ package com.sharkna.khaled.sharkna.account;
  */
 
 // TODO: 8/17/2017 make this class singleton
-public final class GmailAccount {
+public final class CurrentAccount {
 
     private String userName;
     private String userEmail;
     private String userPhotoURL;
-    private static volatile GmailAccount instance;
+    private static volatile CurrentAccount instance;
 
-    private GmailAccount() {
+    private CurrentAccount() {
     }
 
-    public static GmailAccount getInstance() {
+    public static CurrentAccount getInstance() {
         if (instance == null) {
-            synchronized (GmailAccount.class) {
+            synchronized (CurrentAccount.class) {
                 if (instance == null) {
-                    instance = new GmailAccount();
+                    instance = new CurrentAccount();
                 }
             }
         }

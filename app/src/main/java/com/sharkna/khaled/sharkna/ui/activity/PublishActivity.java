@@ -17,8 +17,8 @@ import android.widget.ToggleButton;
 
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
+import com.sharkna.khaled.sharkna.account.CurrentAccount;
 import com.sharkna.khaled.sharkna.account.GMailSender;
-import com.sharkna.khaled.sharkna.account.GmailAccount;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
@@ -49,7 +49,7 @@ public class PublishActivity extends BaseActivity {
     private boolean propagatingToggleState = false;
     private Uri photoUri;
     private int photoSize;
-    GmailAccount gmailAccount;
+    CurrentAccount currentAccount;
 
     public static void openWithPhotoUri(Activity openingActivity, Uri photoUri) {
         Intent intent = new Intent(openingActivity, PublishActivity.class);
@@ -61,7 +61,7 @@ public class PublishActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_publish);
-        gmailAccount = GmailAccount.getInstance();
+        currentAccount = CurrentAccount.getInstance();
         if (toolbar != null) {
             toolbar.setNavigationIcon(R.drawable.ic_arrow_back_grey600_24dp);
         }
@@ -199,7 +199,7 @@ public class PublishActivity extends BaseActivity {
                             PASSWORD);
 //                    Log.d(TAG, "run: ------------------------"+photoUri.getEncodedPath());
                     sender.addAttachment(photoUri.getEncodedPath());
-                    sender.sendMail("Sharkna", description + "\n\n" + gmailAccount.getUserName() + "\n" + gmailAccount.getUserEmail(),
+                    sender.sendMail("Sharkna", description + "\n\n" + currentAccount.getUserName() + "\n" + currentAccount.getUserEmail(),
                             SHARKNAPALESTINE_GMAIL_COM, RECIPIENTS);
                 } catch (Exception e) {
                     Log.e("SendMail", e.getMessage(), e);
