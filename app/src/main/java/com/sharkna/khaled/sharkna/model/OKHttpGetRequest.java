@@ -65,12 +65,26 @@ public class OKHttpGetRequest extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        String requestURL = "http://192.168.1.103/SharknaAPI/v1/api.php/get?apicall=getusers";
+        String getRequestURL = "http://192.168.1.103/SharknaAPI/v1/api.php/get?apicall=getusers";
+        String postRequestURL = "http://192.168.1.103/SharknaAPI/v1/api.php/get?apicall=getuser";
         String response = null;
         try {
-            //this is method for get request
-//            response = example.getRequest(requestURL);
-            response = postRequest(requestURL);
+            //test okhhtps method for get request
+//            response = example.getRequest(getRequestURL);
+            //test okhhtps method for post request
+//            response = postRequest(postRequestURL);
+
+            //test getRequest in RequestHandler
+//            RequestHandler requestHandler = new RequestHandler();
+//            response = requestHandler.sendGetRequest(getRequestURL);
+
+            //test postRequest in RequestHandler
+//            RequestHandler requestHandler = new RequestHandler();
+//            HashMap<String, String> urlParams = new HashMap<>();
+//            urlParams.put("user_name", "ameen");
+//            response = requestHandler.sendPostRequest(postRequestURL,urlParams);
+
+
 
             Log.d(TAG, "doInBackground: \n" + response);
         } catch (Exception e) {
