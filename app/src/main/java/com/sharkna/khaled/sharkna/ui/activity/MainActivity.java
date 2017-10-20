@@ -23,7 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
 import com.sharkna.khaled.sharkna.account.GmailAccount;
-import com.sharkna.khaled.sharkna.model.OKHttpGetRequest;
+import com.sharkna.khaled.sharkna.model.db_utils.OKHttpGetRequest;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedAdapter;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedItemAnimator;
 import com.sharkna.khaled.sharkna.ui.view.FeedContextMenu;

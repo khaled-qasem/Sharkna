@@ -28,18 +28,22 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.sharkna.khaled.sharkna.R;
+import com.sharkna.khaled.sharkna.model.db_utils.DBHelper;
+import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequest;
+
+import java.util.HashMap;
 
 /**
  * Activity to demonstrate basic retrieval of the Google user's ID, email address, and basic
  * profile.
  */
-
 public class SignInActivity extends AppCompatActivity implements
         GoogleApiClient.OnConnectionFailedListener, View.OnClickListener {
 
+
     private static final String TAG = "SignInActivity";
     private static final int RC_SIGN_IN = 9001;
-
+    private static final int CODE_POST_REQUEST = 1025;
     private SignInButton mSignInButton;
 
     private GoogleApiClient mGoogleApiClient;
@@ -104,6 +108,7 @@ public class SignInActivity extends AppCompatActivity implements
             if (result.isSuccess()) {
                 // Google Sign-In was successful, authenticate with Firebase
                 GoogleSignInAccount account = result.getSignInAccount();
+                createUser(account);
                 firebaseAuthWithGoogle(account);
             } else {
                 // Google Sign-In failed
@@ -129,10 +134,33 @@ public class SignInActivity extends AppCompatActivity implements
                             Toast.makeText(SignInActivity.this, "Authentication failed.",
                                     Toast.LENGTH_SHORT).show();
                         } else {
+
                             startActivity(new Intent(SignInActivity.this, MainActivity.class));
                             finish();
                         }
                     }
                 });
+    }
+
+
+    private void createUser(GoogleSignInAccount account) {
+        //if validation passes
+        String email = account.getEmail();
+        String firstName = account.getGivenName();
+        String lastName = account.getFamilyName();
+        String password = "sharkna1";
+        String imageUrl = account.getPhotoUrl().toString();
+        String userName = ((email != null) ? email.split("@") : new String[0])[0];
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("user_name", userName);
+        params.put("first_name", firstName);
+        params.put("last_name", lastName);
+        params.put("image_url", imageUrl);
+        params.put("email", email);
+        params.put("password", password);
+        //Calling the create hero API
+        PerformNetworkRequest request = new PerformNetworkRequest(DBHelper.URL_CREATE_USER, params, CODE_POST_REQUEST);
+        request.execute();
     }
 }

@@ -1,4 +1,4 @@
-package com.sharkna.khaled.sharkna.model;
+package com.sharkna.khaled.sharkna.model.db_utils;
 
 /**
  * Created by Khaled on 10/20/2017.

@@ -1,4 +1,4 @@
-package com.sharkna.khaled.sharkna.model;
+package com.sharkna.khaled.sharkna.model.db_utils;
 
 import android.util.Log;
 

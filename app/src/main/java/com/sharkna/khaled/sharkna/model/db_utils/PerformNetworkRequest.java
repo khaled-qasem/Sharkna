@@ -1,4 +1,4 @@
-package com.sharkna.khaled.sharkna.model;
+package com.sharkna.khaled.sharkna.model.db_utils;
 
 import android.os.AsyncTask;
 
@@ -26,7 +26,7 @@ public class PerformNetworkRequest extends AsyncTask<Void, Void, String> {
     int requestCode;
 
     //constructor to initialize values
-    PerformNetworkRequest(String url, HashMap<String, String> params, int requestCode) {
+    public PerformNetworkRequest(String url, HashMap<String, String> params, int requestCode) {
         this.url = url;
         this.params = params;
         this.requestCode = requestCode;
