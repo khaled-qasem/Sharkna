@@ -199,7 +199,7 @@ public class PublishActivity extends BaseActivity {
                             PASSWORD);
 //                    Log.d(TAG, "run: ------------------------"+photoUri.getEncodedPath());
                     sender.addAttachment(photoUri.getEncodedPath());
-                    sender.sendMail("Sharkna", description + "\n\n" + gmailAccount.getName() + "\n" + gmailAccount.getEmail(),
+                    sender.sendMail("Sharkna", description + "\n\n" + gmailAccount.getUserName() + "\n" + gmailAccount.getUserEmail(),
                             SHARKNAPALESTINE_GMAIL_COM, RECIPIENTS);
                 } catch (Exception e) {
                     Log.e("SendMail", e.getMessage(), e);

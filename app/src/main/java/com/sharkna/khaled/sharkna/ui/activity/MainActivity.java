@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -17,6 +18,8 @@ import android.view.Menu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
 import com.sharkna.khaled.sharkna.account.GmailAccount;
@@ -31,10 +34,10 @@ import butterknife.OnClick;
 
 
 public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFeedItemClickListener,
-        FeedContextMenu.OnFeedContextMenuItemClickListener,ICheckSelfPermissionActivity {
+        FeedContextMenu.OnFeedContextMenuItemClickListener, ICheckSelfPermissionActivity {
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
     public static final String GMAIL_PREFERENCE = "Gmail_account";
-
+    public static final String ANONYMOUS = "anonymous";
 
     private static final int ANIM_DURATION_TOOLBAR = 300;
     private static final int ANIM_DURATION_FAB = 400;
@@ -55,6 +58,15 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
     private Uri photoUri;
     private boolean pendingIntroAnimation;
 
+    private String mUsername;
+    private String mPhotoUrl;
+    private SharedPreferences mSharedPreferences;
+
+    // Firebase instance variables
+    private FirebaseAuth mFirebaseAuth;
+    private FirebaseUser mFirebaseUser;
+    private String mEmail;
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -62,6 +74,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         permissionHandler.handleRequest(requestCode, permissions, grantResults, this.getApplicationContext());
 
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -72,17 +85,45 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             permissionHandler.askForPermissions(this);
         }
 
+        mSharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        // Set default username is anonymous.
+        mUsername = ANONYMOUS;
+        // Initialize Firebase Auth
+        mFirebaseAuth = FirebaseAuth.getInstance();
+        mFirebaseUser = mFirebaseAuth.getCurrentUser();
+        if (mFirebaseUser == null) {
+            // Not signed in, launch the Sign In activity
+            startActivity(new Intent(this, SignInActivity.class));
+            finish();
+            return;
+        } else {
+            mUsername = mFirebaseUser.getDisplayName();
+            mEmail = mFirebaseUser.getEmail();
+            if (mFirebaseUser.getPhotoUrl() != null) {
+                mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
+                GmailAccount gmailAccount = GmailAccount.getInstance();
+                gmailAccount.setUserEmail(mEmail);
+                gmailAccount.setUserName(mUsername);
+                gmailAccount.setUserPhotoURL(mPhotoUrl);
+            }
+        }
+/*
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .enableAutoManage(this *//* FragmentActivity *//*, this *//* OnConnectionFailedListener *//*)
+                .addApi(Auth.GOOGLE_SIGN_IN_API)
+                .build();*/
+
         Intent intent = getIntent();
         if (intent != null) {
-            String gEmail = intent.getStringExtra(EMAIL);
-            String gName = intent.getStringExtra(NAME);
+//            String gEmail = intent.getStringExtra(EMAIL);
+//            String gName = intent.getStringExtra(NAME);
             String uri = intent.getStringExtra(PATH);
             if (uri != null) {
                 photoUri = Uri.parse(intent.getStringExtra(PATH));
 //                Log.d(TAG, "onCreate: ==========================????"+photoUri.getEncodedPath().toString());
             }
 
-            if (gName != null && gEmail!=null) {
+           /* if (gName != null && gEmail!=null) {
                 SharedPreferences gmailAccount = getSharedPreferences(GMAIL_PREFERENCE, 0);
                 SharedPreferences.Editor editor = gmailAccount.edit();
                 editor.putString(NAME, gName);
@@ -90,41 +131,33 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 
                 // Commit the edits!
                 editor.apply();
-            }
+            }*/
         }
-        GmailAccount gmailAccount = GmailAccount.getInstance();
+
         //add preferences here
         // Restore preferences
         SharedPreferences account = getSharedPreferences(GMAIL_PREFERENCE, 0);
-        String accountName = account.getString(NAME, null);
-        String accountEmail = account.getString(EMAIL, null);
-        if (accountEmail != null) {
+//        String accountName = account.getString(NAME, null);
+//        String accountEmail = account.getString(EMAIL, null);
+       /* if (accountEmail != null) {
             Log.d(TAG, "onCreate: accountEmail"+accountEmail);
             Log.d(TAG, "onCreate: accountName"+accountName);
-//            GmailAccount gmailAccount = GmailAccount.getInstance();
-            gmailAccount.setEmail(accountEmail);
-            gmailAccount.setName(accountName);
+          *//*  GmailAccount gmailAccount = GmailAccount.getInstance();
+            gmailAccount.setUserEmail(accountEmail);
+            gmailAccount.setUserName(accountName);
+            gmailAccount.setUserPhotoURL(mPhotoUrl);*//*
         }else{
             Intent SignInIntent = new Intent(this, SignInActivity.class);
             startActivity(SignInIntent);
-        }
-
-        String userName = "khaled";
-        String userPassword = "12345";
-        String type = "login";
-
-//        LoginBackWorker loginBackWorker = new LoginBackWorker(this);
-//        loginBackWorker.execute(type,userName, userPassword);
+        }*/
         OKHttpGetRequest okHttpGetRequest = new OKHttpGetRequest();
         okHttpGetRequest.execute();
-//        System.out.println(response);
-
-//            ------------------------------------------------------------
         setupFeed();
 
         if (savedInstanceState == null) {
             pendingIntroAnimation = true;
         } else {
+//            Log.d(TAG, "onCreate: +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 //            feedAdapter.setPhotoUri(photoUri);
             feedAdapter.updateItems(false);
         }
@@ -222,8 +255,8 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 //        Log.d(TAG, "onCreate: +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 //        feedAdapter.setPhotoUri(photoUri);
         if (photoUri != null) {
-            feedAdapter.updateItems(true,photoUri);
-        }else{
+            feedAdapter.updateItems(true, photoUri);
+        } else {
             feedAdapter.updateItems(true);
         }
     }
@@ -284,11 +317,28 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
     public void showLikedSnackbar() {
         Snackbar.make(clContent, "Liked!", Snackbar.LENGTH_SHORT).show();
     }
+
     public void showLikedSnackbar(boolean liked) {
         if (liked) {
             Snackbar.make(clContent, "Liked!", Snackbar.LENGTH_SHORT).show();
-        }else{
+        } else {
             Snackbar.make(clContent, "DisLiked!", Snackbar.LENGTH_SHORT).show();
         }
     }
+
+    // TODO: 10/14/2017 Handle sign out from firebase
+   /* @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.sign_out_menu:
+                mFirebaseAuth.signOut();
+                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                mUsername = ANONYMOUS;
+                startActivity(new Intent(this, SignInActivity.class));
+                finish();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }*/
 }
