@@ -1,5 +1,7 @@
 package com.sharkna.khaled.sharkna.model;
 
+import android.util.Log;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.InputStreamReader;
@@ -22,6 +24,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 public class RequestHandler {
 
+    private static final String TAG = RequestHandler.class.getName();
+
     //Method to send httpPostRequest
     //This method is taking two arguments
     //First argument is the URL of the script to which we will send the request
@@ -32,7 +36,7 @@ public class RequestHandler {
         URL url;
 
         //StringBuilder object to store the message retrieved from the server
-        StringBuilder sb = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
         try {
             //Initializing Url
             url = new URL(requestURL);
@@ -48,34 +52,34 @@ public class RequestHandler {
             conn.setDoOutput(true);
 
             //Creating an output stream
-            OutputStream os = conn.getOutputStream();
+            OutputStream outputStream = conn.getOutputStream();
 
             //Writing parameters to the request
             //We are using a method getPostDataString which is defined below
             BufferedWriter writer = new BufferedWriter(
-                    new OutputStreamWriter(os, "UTF-8"));
+                    new OutputStreamWriter(outputStream, "UTF-8"));
             writer.write(getPostDataString(postDataParams));
 
             writer.flush();
             writer.close();
-            os.close();
+            outputStream.close();
             int responseCode = conn.getResponseCode();
 
             if (responseCode == HttpsURLConnection.HTTP_OK) {
 
-                BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                sb = new StringBuilder();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                stringBuilder = new StringBuilder();
                 String response;
                 //Reading server response
-                while ((response = br.readLine()) != null) {
-                    sb.append(response);
+                while ((response = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(response);
                 }
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return sb.toString();
+        return stringBuilder.toString();
     }
 
     public String sendGetRequest(String requestURL) {
@@ -90,6 +94,7 @@ public class RequestHandler {
                 sb.append(s + "\n");
             }
         } catch (Exception e) {
+            Log.e(TAG, "sendGetRequest: Exception",e );
         }
         return sb.toString();
     }
