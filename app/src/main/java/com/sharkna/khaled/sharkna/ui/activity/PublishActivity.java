@@ -149,9 +149,9 @@ public class PublishActivity extends BaseActivity implements IOnPostAddedToDatab
 
     private void bringMainActivityToTop() {
         Intent intent = new Intent(this, MainActivity.class);
-//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-//        intent.setAction(MainActivity.ACTION_SHOW_LOADING_ITEM);
-        intent.putExtra(PATH, photoUri.toString());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.setAction(MainActivity.ACTION_SHOW_LOADING_ITEM);
+//        intent.putExtra(PATH, photoUri.toString());
         startActivity(intent);
     }
 

@@ -367,6 +367,8 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         }
     }*/
 
+
+    // TODO: 10/22/2017 user this to get benefit of image from server
     /*private Bitmap getImage(JSONObject jo){
         URL url = null;
         Bitmap image = null;
