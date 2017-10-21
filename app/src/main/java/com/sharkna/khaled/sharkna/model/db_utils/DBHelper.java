@@ -11,6 +11,7 @@ public class DBHelper {
     private static final String ROOT_URL = "http://192.168.1.103/SharknaAPI/v1/api.php/get?apicall=";
 
     public static final String URL_CREATE_USER = ROOT_URL + "createuser";
+    public static final String URL_CREATE_POST= ROOT_URL + "createpost";
     public static final String URL_READ_USERS = ROOT_URL + "getuseres";
     public static final String URL_READ_USER = ROOT_URL + "getuser";
     public static final String URL_UPDATE_USER = ROOT_URL + "updateuser";

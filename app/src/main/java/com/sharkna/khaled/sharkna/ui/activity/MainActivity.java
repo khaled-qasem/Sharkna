@@ -73,6 +73,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
     private FirebaseAuth mFirebaseAuth;
     private FirebaseUser mFirebaseUser;
     private String mEmail;
+    private CurrentAccount currentAccount;
 
 
     @Override
@@ -108,7 +109,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             mEmail = mFirebaseUser.getEmail();
             if (mFirebaseUser.getPhotoUrl() != null) {
                 mPhotoUrl = mFirebaseUser.getPhotoUrl().toString();
-                CurrentAccount currentAccount = CurrentAccount.getInstance();
+                currentAccount = CurrentAccount.getInstance();
                 currentAccount.setUserEmail(mEmail);
                 currentAccount.setUserName(mUsername);
                 currentAccount.setUserPhotoURL(mPhotoUrl);
@@ -346,6 +347,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
     @Override
     public void onGetUserResult(User user) {
         this.user = user;
+        currentAccount.setUserId(user.getId());
     }
 
 
@@ -363,5 +365,21 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }*/
+
+    /*private Bitmap getImage(JSONObject jo){
+        URL url = null;
+        Bitmap image = null;
+        try {
+            url = new URL(jo.getString(IMAGE_URL));
+            image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return image;
     }*/
 }

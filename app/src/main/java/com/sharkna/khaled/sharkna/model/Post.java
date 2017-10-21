@@ -12,7 +12,9 @@ public class Post {
     private int userId;
     private int municipalityId;
     private String description;
-    private String imageURL;
+    private String image;
+    private String server_image_url;
+    private int publicPost;
 
     public void setId(int id) {
         this.id = id;
@@ -30,8 +32,8 @@ public class Post {
         this.description = description;
     }
 
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public int getId() {
@@ -50,7 +52,23 @@ public class Post {
         return description;
     }
 
-    public String getImageURL() {
-        return imageURL;
+    public String getImage() {
+        return image;
+    }
+
+    public int getPublicPost() {
+        return publicPost;
+    }
+
+    public void setPublicPost(int publicPost) {
+        this.publicPost = publicPost;
+    }
+
+    public String getServer_image_url() {
+        return server_image_url;
+    }
+
+    public void setServer_image_url(String server_image_url) {
+        this.server_image_url = server_image_url;
     }
 }

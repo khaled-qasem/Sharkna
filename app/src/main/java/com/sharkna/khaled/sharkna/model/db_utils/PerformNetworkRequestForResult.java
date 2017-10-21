@@ -20,12 +20,13 @@ public class PerformNetworkRequestForResult extends AsyncTask<Void, Void, String
     private static final int CODE_GET_REQUEST = 1024;
     private static final int CODE_POST_REQUEST = 1025;
     public static final String CREATE_USER = "createuser";
-    public static final String READ_USER =  "getusere";
+    public static final String READ_USER = "getusere";
     private static final String TAG = PerformNetworkRequestForResult.class.getName();
     //the url where we need to send the request
     String url;
     String networkTask;
     IGetUserListener iGetUserListener;
+    IOnPostAddedToDatabaseListener iOnPostAddedToDatabaseListener;
 
     //the parameters
     HashMap<String, String> params;
@@ -53,8 +54,8 @@ public class PerformNetworkRequestForResult extends AsyncTask<Void, Void, String
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
 //        progressBar.setVisibility(GONE);
+        Log.d(TAG, "onPostExecute: "+s);
         try {
-//            Log.d(TAG, "onPostExecute: "+s);
             JSONObject object = new JSONObject(s);
             if (!object.getBoolean("error")) {
 //                Toast.makeText(getApplicationContext(), object.getString("message"), Toast.LENGTH_SHORT).show();
@@ -62,8 +63,11 @@ public class PerformNetworkRequestForResult extends AsyncTask<Void, Void, String
                 //so we get an updated list
                 //we will create this method right now it is commented
                 //because we haven't created it yet
-                if (url == DBHelper.URL_READ_USER) {
+                if (url.equalsIgnoreCase(DBHelper.URL_READ_USER)) {
                     handleJsonUserData(object.getJSONObject("user"));
+                } else if (url.equalsIgnoreCase(DBHelper.URL_CREATE_POST)) {
+                    Log.d(TAG, "onPostExecute: "+s);
+                    iOnPostAddedToDatabaseListener.onPostAddedtoDatabase(s);
                 }
 
                 //refreshHeroList(object.getJSONArray("heroes"));
@@ -99,7 +103,7 @@ public class PerformNetworkRequestForResult extends AsyncTask<Void, Void, String
             user.setPoints(jsonUserObject.getInt("points"));
             user.setPassword(jsonUserObject.getString("password"));
         } catch (JSONException e) {
-            Log.e(TAG, "handleJsonUserData: JSONExceptoin",e );
+            Log.e(TAG, "handleJsonUserData: JSONExceptoin", e);
         }
         iGetUserListener.onGetUserResult(user);
     }
@@ -108,6 +112,9 @@ public class PerformNetworkRequestForResult extends AsyncTask<Void, Void, String
         this.iGetUserListener = iGetUserListener;
     }
 
+    public void setiOnPostAddedToDatabaseListener(IOnPostAddedToDatabaseListener iOnPostAddedToDatabaseListener) {
+        this.iOnPostAddedToDatabaseListener = iOnPostAddedToDatabaseListener;
+    }
     /*private void refreshHeroList(JSONArray heroes) throws JSONException {
         //clearing previous heroes
         heroList.clear();

@@ -48,4 +48,5 @@
     <string name="signed_in_fmt">sing in</string>
     <string name="loading">loading</string>
     <string name="signed_out">signed_out</string>
+    <string name="welcome_to_sharkna">Welcome to Sharkna</string>
 </resources>

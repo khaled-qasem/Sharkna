@@ -12,6 +12,7 @@ public final class CurrentAccount {
     private String userName;
     private String userEmail;
     private String userPhotoURL;
+    private int userId;
     private static volatile CurrentAccount instance;
 
     private CurrentAccount() {
@@ -49,5 +50,13 @@ public final class CurrentAccount {
 
     public void setUserPhotoURL(String userPhotoURL) {
         this.userPhotoURL = userPhotoURL;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 }

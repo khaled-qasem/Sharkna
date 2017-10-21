@@ -3,9 +3,12 @@ package com.sharkna.khaled.sharkna.ui.activity;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Base64;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,8 +22,16 @@ import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
 import com.sharkna.khaled.sharkna.account.CurrentAccount;
 import com.sharkna.khaled.sharkna.account.GMailSender;
+import com.sharkna.khaled.sharkna.model.Post;
+import com.sharkna.khaled.sharkna.model.db_utils.DBHelper;
+import com.sharkna.khaled.sharkna.model.db_utils.IOnPostAddedToDatabaseListener;
+import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequestForResult;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.OnCheckedChanged;
@@ -28,14 +39,14 @@ import butterknife.OnCheckedChanged;
 /**
  * Created by Khaled
  */
-public class PublishActivity extends BaseActivity {
+public class PublishActivity extends BaseActivity implements IOnPostAddedToDatabaseListener {
     public static final String ARG_TAKEN_PHOTO_URI = "arg_taken_photo_uri";
     private static final String TAG = PublishActivity.class.getName();
     public static final String SHARKNAPALESTINE_GMAIL_COM = "sharknapalestine@gmail.com";
     public static final String PASSWORD = "sharkna12345";
     public static final String RECIPIENTS = "khaled.alqerem@gmail.com";
     public static final String PATH = "path";
-
+    private static final int CODE_POST_REQUEST = 1025;
 
     @BindView(R.id.tbFollowers)
     ToggleButton tbFollowers;
@@ -126,7 +137,9 @@ public class PublishActivity extends BaseActivity {
         if (item.getItemId() == R.id.action_publish) {
             Log.d(TAG, "saveImage: now send email through composeEmail");
             String description = editTextDescription.getText().toString();
-            sendGmail(photoUri, description);
+            //take action to data base here
+            addPostToDatabase(photoUri,description);
+//            sendGmail(photoUri, description);
             bringMainActivityToTop();
             return true;
         } else {
@@ -207,5 +220,42 @@ public class PublishActivity extends BaseActivity {
             }
 
         }).start();
+    }
+
+    private void addPostToDatabase(Uri photoUri, String description) {
+        Bitmap bitmap=null;
+        try {
+            bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), photoUri);
+        } catch (IOException e) {
+            Log.e(TAG, "addPostToDatabase: IOException", e);
+        }
+        Post post = new Post();
+        post.setImage(getStringImage(bitmap));
+        post.setDescription(description);
+        post.setUserId(currentAccount.getUserId());
+        post.setMunicipalityId(0);
+        post.setPublicPost(1);
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("user_id", String.valueOf(post.getUserId()));
+        params.put("municipality_id", String.valueOf(post.getMunicipalityId()));
+        params.put("description", post.getDescription());
+        params.put("image", post.getImage());
+        params.put("public_post", String.valueOf(post.getPublicPost()));
+        //Calling the create hero API
+        PerformNetworkRequestForResult request = new PerformNetworkRequestForResult(DBHelper.URL_CREATE_POST, params, CODE_POST_REQUEST);
+        request.setiOnPostAddedToDatabaseListener(this);
+        request.execute();
+    }
+
+    public String getStringImage(Bitmap bmp){
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
+        byte[] imageBytes = baos.toByteArray();
+        return Base64.encodeToString(imageBytes, Base64.DEFAULT);
+    }
+    @Override
+    public void onPostAddedtoDatabase(String string) {
+        Log.d(TAG, "onPostAddedtoDatabase: "+string);
     }
 }

@@ -56,7 +56,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome to Sharekna"
+        android:text="@string/welcome_to_sharkna"
         android:textSize="26sp"
         android:textColor="#000"
         android:layout_below="@+id/toolbar"
