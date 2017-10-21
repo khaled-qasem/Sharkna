@@ -12,7 +12,10 @@ public class DBHelper {
 
     public static final String URL_CREATE_USER = ROOT_URL + "createuser";
     public static final String URL_READ_USERS = ROOT_URL + "getuseres";
+    public static final String URL_READ_USER = ROOT_URL + "getuser";
     public static final String URL_UPDATE_USER = ROOT_URL + "updateuser";
     public static final String URL_DELETE_USER = ROOT_URL + "deleteuser&id=";
+    public static final String CREATE_USER = "createuser";
+    public static final String READ_USER =  "getusere";
 
 }

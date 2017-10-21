@@ -16,8 +16,11 @@ import java.util.HashMap;
 public class PerformNetworkRequest extends AsyncTask<Void, Void, String> {
     private static final int CODE_GET_REQUEST = 1024;
     private static final int CODE_POST_REQUEST = 1025;
+    public static final String CREATE_USER = "createuser";
+    public static final String READ_USER =  "getusere";
     //the url where we need to send the request
     String url;
+    String networkTask;
 
     //the parameters
     HashMap<String, String> params;

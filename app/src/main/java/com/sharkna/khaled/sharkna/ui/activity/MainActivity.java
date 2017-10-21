@@ -23,21 +23,27 @@ import com.google.firebase.auth.FirebaseUser;
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
 import com.sharkna.khaled.sharkna.account.CurrentAccount;
-import com.sharkna.khaled.sharkna.model.db_utils.OKHttpGetRequest;
+import com.sharkna.khaled.sharkna.model.User;
+import com.sharkna.khaled.sharkna.model.db_utils.DBHelper;
+import com.sharkna.khaled.sharkna.model.db_utils.IGetUserListener;
+import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequestForResult;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedAdapter;
 import com.sharkna.khaled.sharkna.ui.adapter.FeedItemAnimator;
 import com.sharkna.khaled.sharkna.ui.view.FeedContextMenu;
 import com.sharkna.khaled.sharkna.ui.view.FeedContextMenuManager;
+
+import java.util.HashMap;
 
 import butterknife.BindView;
 import butterknife.OnClick;
 
 
 public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFeedItemClickListener,
-        FeedContextMenu.OnFeedContextMenuItemClickListener, ICheckSelfPermissionActivity {
+        FeedContextMenu.OnFeedContextMenuItemClickListener, ICheckSelfPermissionActivity,IGetUserListener {
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
     public static final String GMAIL_PREFERENCE = "Gmail_account";
     public static final String ANONYMOUS = "anonymous";
+    private static final int CODE_POST_REQUEST = 1025;
 
     private static final int ANIM_DURATION_TOOLBAR = 300;
     private static final int ANIM_DURATION_FAB = 400;
@@ -54,6 +60,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
     CoordinatorLayout clContent;
 
     private FeedAdapter feedAdapter;
+    private User user;
 
     private Uri photoUri;
     private boolean pendingIntroAnimation;
@@ -106,6 +113,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
                 currentAccount.setUserName(mUsername);
                 currentAccount.setUserPhotoURL(mPhotoUrl);
             }
+            getUserFromDatabase(mEmail);
         }
 /*
         mGoogleApiClient = new GoogleApiClient.Builder(this)
@@ -150,8 +158,8 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             Intent SignInIntent = new Intent(this, SignInActivity.class);
             startActivity(SignInIntent);
         }*/
-        OKHttpGetRequest okHttpGetRequest = new OKHttpGetRequest();
-        okHttpGetRequest.execute();
+//        OKHttpGetRequest okHttpGetRequest = new OKHttpGetRequest();
+//        okHttpGetRequest.execute();
         setupFeed();
 
         if (savedInstanceState == null) {
@@ -161,6 +169,15 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 //            feedAdapter.setPhotoUri(photoUri);
             feedAdapter.updateItems(false);
         }
+    }
+
+    private void getUserFromDatabase(String email) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("email", email);
+        //Calling the user API
+        PerformNetworkRequestForResult request = new PerformNetworkRequestForResult(DBHelper.URL_READ_USER, params, CODE_POST_REQUEST);
+        request.setIGetUserListener(this);
+        request.execute();
     }
 
     private void setupFeed() {
@@ -325,6 +342,12 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             Snackbar.make(clContent, "DisLiked!", Snackbar.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onGetUserResult(User user) {
+        this.user = user;
+    }
+
 
     // TODO: 10/14/2017 Handle sign out from firebase
    /* @Override
