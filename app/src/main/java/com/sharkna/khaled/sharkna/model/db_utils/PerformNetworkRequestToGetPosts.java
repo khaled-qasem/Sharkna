@@ -3,11 +3,14 @@ package com.sharkna.khaled.sharkna.model.db_utils;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.sharkna.khaled.sharkna.model.Post;
 import com.sharkna.khaled.sharkna.model.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -16,24 +19,24 @@ import java.util.HashMap;
  * Descriptions
  */
 
-public class PerformNetworkRequestForResult extends AsyncTask<Void, Void, String> {
+public class PerformNetworkRequestToGetPosts extends AsyncTask<Void, Void, String> implements IGetUsersListener {
     private static final int CODE_GET_REQUEST = 1024;
     private static final int CODE_POST_REQUEST = 1025;
-    private static final String TAG = PerformNetworkRequestForResult.class.getName();
+    private static final String TAG = PerformNetworkRequestToGetPosts.class.getName();
+    IGetPostsListener iGetPostsListener;
     //the url where we need to send the request
     String url;
     String networkTask;
-    IGetUserListener iGetUserListener;
-    IOnPostAddedToDatabaseListener iOnPostAddedToDatabaseListener;
 
     //the parameters
     HashMap<String, String> params;
+    ArrayList<Post> postsList;
 
     //the request code to define whether it is a GET or POST
     int requestCode;
 
     //constructor to initialize values
-    public PerformNetworkRequestForResult(String url, HashMap<String, String> params, int requestCode) {
+    public PerformNetworkRequestToGetPosts(String url, HashMap<String, String> params, int requestCode) {
         this.url = url;
         this.params = params;
         this.requestCode = requestCode;
@@ -43,6 +46,7 @@ public class PerformNetworkRequestForResult extends AsyncTask<Void, Void, String
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+
 //        progressBar.setVisibility(View.VISIBLE);
     }
 
@@ -52,7 +56,7 @@ public class PerformNetworkRequestForResult extends AsyncTask<Void, Void, String
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
 //        progressBar.setVisibility(GONE);
-        Log.d(TAG, "onPostExecute: "+s);
+        Log.d(TAG, "onPostExecute: " + s);
         try {
             JSONObject object = new JSONObject(s);
             if (!object.getBoolean("error")) {
@@ -61,11 +65,14 @@ public class PerformNetworkRequestForResult extends AsyncTask<Void, Void, String
                 //so we get an updated list
                 //we will create this method right now it is commented
                 //because we haven't created it yet
-                if (url.equalsIgnoreCase(DBHelper.URL_READ_USER)) {
+                if (url.equalsIgnoreCase(DBHelper.URL_READ_POSTS)) {
+                    fillPostsList(object.getJSONArray("posts"));
+
+                } else if (url.equalsIgnoreCase(DBHelper.URL_READ_USERS)) {
                     handleJsonUserData(object.getJSONObject("user"));
+
                 } else if (url.equalsIgnoreCase(DBHelper.URL_CREATE_POST)) {
-                    Log.d(TAG, "onPostExecute: "+s);
-                    iOnPostAddedToDatabaseListener.onPostAddedtoDatabase(s);
+                    Log.d(TAG, "onPostExecute: " + s);
                 }
 
                 //refreshHeroList(object.getJSONArray("heroes"));
@@ -103,39 +110,51 @@ public class PerformNetworkRequestForResult extends AsyncTask<Void, Void, String
         } catch (JSONException e) {
             Log.e(TAG, "handleJsonUserData: JSONExceptoin", e);
         }
-        iGetUserListener.onGetUserResult(user);
     }
 
-    public void setIGetUserListener(IGetUserListener iGetUserListener) {
-        this.iGetUserListener = iGetUserListener;
-    }
-
-    public void setiOnPostAddedToDatabaseListener(IOnPostAddedToDatabaseListener iOnPostAddedToDatabaseListener) {
-        this.iOnPostAddedToDatabaseListener = iOnPostAddedToDatabaseListener;
-    }
-    /*private void refreshHeroList(JSONArray heroes) throws JSONException {
+    private void fillPostsList(JSONArray posts) throws JSONException {
         //clearing previous heroes
-        heroList.clear();
+//        heroList.clear();
+        postsList = new ArrayList<>();
 
         //traversing through all the items in the json array
         //the json we got from the response
-        for (int i = 0; i < heroes.length(); i++) {
+        for (int i = 0; i < posts.length(); i++) {
             //getting each hero object
-            JSONObject obj = heroes.getJSONObject(i);
+            JSONObject obj = posts.getJSONObject(i);
 
             //adding the hero to the list
-            heroList.add(new Hero(
+            postsList.add(new Post(
                     obj.getInt("id"),
-                    obj.getString("name"),
-                    obj.getString("realname"),
-                    obj.getInt("rating"),
-                    obj.getString("teamaffiliation")
+                    obj.getInt("user_id"),
+                    obj.getInt("municipality_id"),
+                    obj.getString("description"),
+                    obj.getString("image_server_path")
             ));
         }
+        PerformNetworkRequestToGetUsers request = new PerformNetworkRequestToGetUsers(DBHelper.URL_READ_USERS, params, CODE_GET_REQUEST);
+        request.setiGetUsersListener(this);
+        request.execute();
+    }
 
-        //creating the adapter and setting it to the listview
-        HeroAdapter adapter = new HeroAdapter(heroList);
-        listView.setAdapter(adapter);
-    }*/
+    @Override
+    public void onGetUsersResult(ArrayList<User> users) {
+        for (Post post : postsList) {
+            for (User user:users) {
+                if (post.getUserId() == user.getId()) {
+                    post.setUser(user);
+                }
+            }
+        }
+        iGetPostsListener.onGetPostsResult(postsList);
+    }
 
+    public void setiGetPostsListener(IGetPostsListener iGetPostsListener) {
+        this.iGetPostsListener = iGetPostsListener;
+    }
 }
+
+
+
+//call get users in doInbackground
+// whenever users arraived assign users to posts

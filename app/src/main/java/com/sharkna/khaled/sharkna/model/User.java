@@ -16,6 +16,20 @@ public class User {
     private int points;
     private String password;
 
+    public User(int id, String userName, String firstName, String lastName, String imageURL, String email, int points, String password) {
+        this.id = id;
+        this.userName = userName;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.imageURL = imageURL;
+        this.points = points;
+        this.password = password;
+    }
+
+    public User() {
+    }
+
     public int getId() {
         return id;
     }

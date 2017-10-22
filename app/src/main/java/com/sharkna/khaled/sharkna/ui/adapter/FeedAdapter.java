@@ -1,7 +1,10 @@
 package com.sharkna.khaled.sharkna.ui.adapter;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,11 +19,18 @@ import android.widget.TextView;
 
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.model.FeedItem;
+import com.sharkna.khaled.sharkna.model.Post;
+import com.sharkna.khaled.sharkna.model.db_utils.DBHelper;
+import com.sharkna.khaled.sharkna.model.db_utils.IGetPostsListener;
+import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequestToGetPosts;
 import com.sharkna.khaled.sharkna.ui.activity.MainActivity;
 import com.sharkna.khaled.sharkna.ui.view.LoadingFeedItemView;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindView;
@@ -29,10 +39,11 @@ import butterknife.ButterKnife;
 /**
  * Created by Khaled on 18.06.17
  */
-public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements IGetPostsListener{
     public static final String ACTION_LIKE_BUTTON_CLICKED = "action_like_button_button";
     public static final String ACTION_LIKE_IMAGE_CLICKED = "action_like_image_button";
-
+    private static final int CODE_GET_REQUEST = 1024;
+    private static final int CODE_POST_REQUEST = 1025;
     public static final int VIEW_TYPE_DEFAULT = 1;
     public static final int VIEW_TYPE_LOADER = 2;
     private static final String TAG = FeedAdapter.class.getName();
@@ -44,6 +55,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private boolean showLoadingView = false;
     private boolean liked=false;
+    private boolean animated;
 
     public FeedAdapter(Context context) {
         this.context = context;
@@ -168,9 +180,19 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     public void updateItems(boolean animated) {
-        feedItems.clear();
+        this.animated = animated;
+        HashMap<String, String> params = new HashMap<>();
+        PerformNetworkRequestToGetPosts request = new PerformNetworkRequestToGetPosts(DBHelper.URL_READ_POSTS, params, CODE_GET_REQUEST);
+        request.setiGetPostsListener(this);
+        request.execute();
+
+
+
+
+       /* feedItems.clear();
         // TODO: 10/20/2017 get posts from database here
 
+//        feedItems.addAll(matchFeedItemsWithPostsFromDatabase());
         feedItems.addAll(Arrays.asList(
                 new FeedItem(33, false),
                 new FeedItem(1, false),
@@ -184,9 +206,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
             notifyItemRangeInserted(0, feedItems.size());
         } else {
             notifyDataSetChanged();
-        }
+        }*/
     }
-    public void updateItems(boolean animated,Uri photoUri) {
+
+   /* public void updateItems(boolean animated,Uri photoUri) {
         feedItems.clear();
         feedItems.addAll(Arrays.asList(
                 new FeedItem(33, false),
@@ -209,7 +232,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         } else {
             notifyDataSetChanged();
         }
-    }
+    }*/
 
     public void setOnFeedItemClickListener(OnFeedItemClickListener onFeedItemClickListener) {
         this.onFeedItemClickListener = onFeedItemClickListener;
@@ -233,6 +256,30 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 //                    ((MainActivity) context).showLikedSnackbar();
             ((MainActivity) context).showLikedSnackbar(liked);
         }*/
+    }
+
+    @Override
+    public void onGetPostsResult(ArrayList<Post> posts) {
+        matchFeedItemsWithPostsFromDatabase(posts);
+        /*  feedItems.clear();
+        // TODO: 10/20/2017 get posts from database here
+
+        feedItems.addAll(matchFeedItemsWithPostsFromDatabase(posts));
+        *//*feedItems.addAll(Arrays.asList(
+                new FeedItem(33, false),
+                new FeedItem(1, false),
+                new FeedItem(223, false),
+                new FeedItem(2, false),
+                new FeedItem(6, false),
+                new FeedItem(8, false),
+                new FeedItem(99, false)
+        ));*//*
+        if (animated) {
+            notifyItemRangeInserted(0, feedItems.size());
+        } else {
+            notifyDataSetChanged();
+        }*/
+
     }
 
     public static class CellFeedViewHolder extends RecyclerView.ViewHolder {
@@ -268,18 +315,24 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         public void bindView(FeedItem feedItem) {
             this.feedItem = feedItem;
             int adapterPosition = getAdapterPosition();
+            new DownloadImageTask(ivFeedCenter)
+                    .execute(feedItem.getServer_image_url());
+//            ivFeedCenter.setImageBitmap(getBitmapImage(feedItem.getServer_image_url()));
+            ivFeedBottom.setText(feedItem.getDescription());
+            ivFeedBottom.setTextSize(18f);
+
 //            ivFeedCenter.setImageResource(adapterPosition % 2 == 0 ? R.drawable.img_feed_center_1 : R.drawable.img_feed_center_2);
 //            /storage/emulated/0/DCIM/Photo_20170912_225542.jpg
-            if (adapterPosition == 0 &&feedItem.photoUri != null) {
+           /* if (adapterPosition == 0 &&feedItem.photoUri != null) {
                     Log.d(TAG, "bindView: ==========================>>>>>"+feedItem.photoUri.toString());
                     ivFeedCenter.setImageURI(feedItem.photoUri);
             }else {
                 ivFeedCenter.setImageResource(adapterPosition % 2 == 0 ? R.drawable.ram1 : R.drawable.ram2);
-            }
+            }*/
             // TODO: 10/9/2017 set ivFeedBottom
 //            ivFeedBottom.setImageResource(adapterPosition % 2 == 0 ? R.drawable.img_feed_bottom_1 : R.drawable.img_feed_bottom_2);
-            ivFeedBottom.setText("     this is just a description");
-            ivFeedBottom.setTextSize(18f);
+//            ivFeedBottom.setText("     this is just a description");
+//            ivFeedBottom.setTextSize(18f);
             btnLike.setImageResource(feedItem.isLiked ? R.drawable.ic_heart_red : R.drawable.ic_heart_outline_grey);
             tsLikesCounter.setCurrentText(vImageRoot.getResources().getQuantityString(
                     R.plurals.likes_count, feedItem.likesCount, feedItem.likesCount
@@ -288,6 +341,20 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         public FeedItem getFeedItem() {
             return feedItem;
+        }
+
+        private Bitmap getBitmapImage(String imageUrl){
+            URL url = null;
+            Bitmap image = null;
+            try {
+                url = new URL(imageUrl);
+                image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return image;
         }
     }
 
@@ -323,5 +390,60 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         void onMoreClick(View v, int position);
 
         void onProfileClick(View v);
+    }
+
+    private void matchFeedItemsWithPostsFromDatabase(ArrayList<Post> posts) {
+        feedItems.clear();
+        // TODO: 10/20/2017 get posts from database here
+
+        for (Post post:posts) {
+            FeedItem feedItem= new FeedItem();
+            feedItem.setServer_image_url(post.getServer_image_url());
+            feedItem.setDescription(post.getDescription());
+            feedItem.setLiked(false);
+            feedItem.setLikesCount(4);
+            feedItem.setFirstName(post.getUser().getFirstName());
+            feedItem.setLastName(post.getUser().getLastName());
+            feedItem.setUserPhotoUri(post.getUser().getImageURL());
+            feedItems.add(feedItem);
+        }
+        if (animated) {
+            notifyItemRangeInserted(0, feedItems.size());
+        } else {
+            notifyDataSetChanged();
+        }
+
+    }
+
+     static Bitmap getBitmapImage(String imageUrl){
+        URL url = null;
+        Bitmap image = null;
+        try {
+            url = new URL(imageUrl);
+            image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return image;
+    }
+
+
+    private static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+        ImageView imageView;
+
+        public DownloadImageTask(ImageView imageView) {
+            this.imageView = imageView;
+        }
+
+        protected Bitmap doInBackground(String... urls) {
+            String urldisplay = urls[0];
+            return getBitmapImage(urldisplay );
+        }
+
+        protected void onPostExecute(Bitmap result) {
+            imageView.setImageBitmap(result);
+        }
     }
 }

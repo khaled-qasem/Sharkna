@@ -12,7 +12,8 @@ public class DBHelper {
 
     public static final String URL_CREATE_USER = ROOT_URL + "createuser";
     public static final String URL_CREATE_POST= ROOT_URL + "createpost";
-    public static final String URL_READ_USERS = ROOT_URL + "getuseres";
+    public static final String URL_READ_USERS = ROOT_URL + "getusers";
+    public static final String URL_READ_POSTS= ROOT_URL + "getposts";
     public static final String URL_READ_USER = ROOT_URL + "getuser";
     public static final String URL_UPDATE_USER = ROOT_URL + "updateuser";
     public static final String URL_DELETE_USER = ROOT_URL + "deleteuser&id=";

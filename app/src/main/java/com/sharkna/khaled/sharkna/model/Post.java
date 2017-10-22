@@ -15,6 +15,18 @@ public class Post {
     private String image;
     private String server_image_url;
     private int publicPost;
+    private User user;
+
+    public Post(int id, int userId, int municipalityId, String description, String server_image_url) {
+        this.id = id;
+        this.userId = userId;
+        this.municipalityId = municipalityId;
+        this.description = description;
+        this.server_image_url = server_image_url;
+    }
+
+    public Post() {
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -70,5 +82,13 @@ public class Post {
 
     public void setServer_image_url(String server_image_url) {
         this.server_image_url = server_image_url;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

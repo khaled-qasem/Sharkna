@@ -13,7 +13,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
@@ -216,7 +215,6 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "run: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
 //                feedAdapter.setPhotoUri(photoUri);
                 rvFeed.smoothScrollToPosition(0);
                 feedAdapter.showLoadingView();
@@ -270,10 +268,9 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
                 .setStartDelay(300)
                 .setDuration(ANIM_DURATION_FAB)
                 .start();
-//        Log.d(TAG, "onCreate: +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 //        feedAdapter.setPhotoUri(photoUri);
         if (photoUri != null) {
-            feedAdapter.updateItems(true, photoUri);
+//            feedAdapter.updateItems(true, photoUri);
         } else {
             feedAdapter.updateItems(true);
         }
