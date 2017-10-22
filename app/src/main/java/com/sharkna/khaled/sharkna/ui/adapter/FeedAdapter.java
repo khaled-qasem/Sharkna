@@ -1,10 +1,8 @@
 package com.sharkna.khaled.sharkna.ui.adapter;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -21,14 +19,13 @@ import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.model.FeedItem;
 import com.sharkna.khaled.sharkna.model.Post;
 import com.sharkna.khaled.sharkna.model.db_utils.DBHelper;
+import com.sharkna.khaled.sharkna.model.db_utils.DownloadImageTask;
+import com.sharkna.khaled.sharkna.model.db_utils.DownloadRoundImageTask;
 import com.sharkna.khaled.sharkna.model.db_utils.IGetPostsListener;
 import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequestToGetPosts;
 import com.sharkna.khaled.sharkna.ui.activity.MainActivity;
 import com.sharkna.khaled.sharkna.ui.view.LoadingFeedItemView;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -302,6 +299,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         TextSwitcher tsLikesCounter;
         @BindView(R.id.ivUserProfile)
         ImageView ivUserProfile;
+        @BindView(R.id.ivUserName)
+        TextView ivUserName;
         @BindView(R.id.vImageRoot)
         FrameLayout vImageRoot;
 
@@ -315,24 +314,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         public void bindView(FeedItem feedItem) {
             this.feedItem = feedItem;
             int adapterPosition = getAdapterPosition();
+            new DownloadRoundImageTask(ivUserProfile)
+                    .execute(feedItem.getUserPhotoUri());
             new DownloadImageTask(ivFeedCenter)
                     .execute(feedItem.getServer_image_url());
-//            ivFeedCenter.setImageBitmap(getBitmapImage(feedItem.getServer_image_url()));
+            ivUserName.setText(feedItem.getFirstName()+" "+feedItem.getLastName());
+            ivUserName.setTextSize(18f);
+            ivUserName.setTextColor(Color.rgb(95, 98, 127));
             ivFeedBottom.setText(feedItem.getDescription());
             ivFeedBottom.setTextSize(18f);
-
-//            ivFeedCenter.setImageResource(adapterPosition % 2 == 0 ? R.drawable.img_feed_center_1 : R.drawable.img_feed_center_2);
-//            /storage/emulated/0/DCIM/Photo_20170912_225542.jpg
-           /* if (adapterPosition == 0 &&feedItem.photoUri != null) {
-                    Log.d(TAG, "bindView: ==========================>>>>>"+feedItem.photoUri.toString());
-                    ivFeedCenter.setImageURI(feedItem.photoUri);
-            }else {
-                ivFeedCenter.setImageResource(adapterPosition % 2 == 0 ? R.drawable.ram1 : R.drawable.ram2);
-            }*/
-            // TODO: 10/9/2017 set ivFeedBottom
-//            ivFeedBottom.setImageResource(adapterPosition % 2 == 0 ? R.drawable.img_feed_bottom_1 : R.drawable.img_feed_bottom_2);
-//            ivFeedBottom.setText("     this is just a description");
-//            ivFeedBottom.setTextSize(18f);
             btnLike.setImageResource(feedItem.isLiked ? R.drawable.ic_heart_red : R.drawable.ic_heart_outline_grey);
             tsLikesCounter.setCurrentText(vImageRoot.getResources().getQuantityString(
                     R.plurals.likes_count, feedItem.likesCount, feedItem.likesCount
@@ -343,19 +333,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             return feedItem;
         }
 
-        private Bitmap getBitmapImage(String imageUrl){
-            URL url = null;
-            Bitmap image = null;
-            try {
-                url = new URL(imageUrl);
-                image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            return image;
-        }
     }
 
     public static class LoadingCellFeedViewHolder extends CellFeedViewHolder {
@@ -372,17 +349,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             super.bindView(feedItem);
         }
     }
-
-  /*  public static class FeedItem {
-        public int likesCount;
-        public boolean isLiked;
-        public Uri photoUri;
-
-        public FeedItem(int likesCount, boolean isLiked) {
-            this.likesCount = likesCount;
-            this.isLiked = isLiked;
-        }
-    }*/
 
     public interface OnFeedItemClickListener {
         void onCommentsClick(View v, int position);
@@ -412,10 +378,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         } else {
             notifyDataSetChanged();
         }
-
     }
 
-     static Bitmap getBitmapImage(String imageUrl){
+
+
+    /* static Bitmap getBitmapImage(String imageUrl){
         URL url = null;
         Bitmap image = null;
         try {
@@ -427,10 +394,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             e.printStackTrace();
         }
         return image;
-    }
+    }*/
 
 
-    private static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
+    /*private static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
         ImageView imageView;
 
         public DownloadImageTask(ImageView imageView) {
@@ -445,5 +412,5 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         protected void onPostExecute(Bitmap result) {
             imageView.setImageBitmap(result);
         }
-    }
+    }*/
 }
