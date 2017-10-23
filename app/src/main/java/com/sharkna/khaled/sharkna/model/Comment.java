@@ -12,6 +12,14 @@ public class Comment {
     private int postId;
     private int userId;
     private String description;
+    private User user;
+
+    public Comment(int id, int postId, int userId, String description) {
+        this.id = id;
+        this.postId = postId;
+        this.userId = userId;
+        this.description = description;
+    }
 
     public void setId(int id) {
         this.id = id;
@@ -43,5 +51,13 @@ public class Comment {
 
     public String getDescription() {
         return description;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

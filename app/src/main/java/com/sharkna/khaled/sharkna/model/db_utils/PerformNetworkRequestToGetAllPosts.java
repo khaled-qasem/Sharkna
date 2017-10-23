@@ -3,6 +3,7 @@ package com.sharkna.khaled.sharkna.model.db_utils;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.sharkna.khaled.sharkna.model.Comment;
 import com.sharkna.khaled.sharkna.model.Post;
 import com.sharkna.khaled.sharkna.model.User;
 
@@ -19,10 +20,10 @@ import java.util.HashMap;
  * Descriptions
  */
 
-public class PerformNetworkRequestToGetPosts extends AsyncTask<Void, Void, String> implements IGetUsersListener {
+public class PerformNetworkRequestToGetAllPosts extends AsyncTask<Void, Void, String> implements IGetUsersListener, IGetAllLikesListener, IGetAllCommentsListener {
     private static final int CODE_GET_REQUEST = 1024;
     private static final int CODE_POST_REQUEST = 1025;
-    private static final String TAG = PerformNetworkRequestToGetPosts.class.getName();
+    private static final String TAG = PerformNetworkRequestToGetAllPosts.class.getName();
     IGetPostsListener iGetPostsListener;
     //the url where we need to send the request
     String url;
@@ -31,12 +32,13 @@ public class PerformNetworkRequestToGetPosts extends AsyncTask<Void, Void, Strin
     //the parameters
     HashMap<String, String> params;
     ArrayList<Post> postsList;
+    ArrayList<User> usersList;
 
     //the request code to define whether it is a GET or POST
     int requestCode;
 
     //constructor to initialize values
-    public PerformNetworkRequestToGetPosts(String url, HashMap<String, String> params, int requestCode) {
+    public PerformNetworkRequestToGetAllPosts(String url, HashMap<String, String> params, int requestCode) {
         this.url = url;
         this.params = params;
         this.requestCode = requestCode;
@@ -129,7 +131,8 @@ public class PerformNetworkRequestToGetPosts extends AsyncTask<Void, Void, Strin
                     obj.getInt("user_id"),
                     obj.getInt("municipality_id"),
                     obj.getString("description"),
-                    obj.getString("image_server_path")
+                    obj.getString("image_server_path"),
+                    0
             ));
         }
         PerformNetworkRequestToGetUsers request = new PerformNetworkRequestToGetUsers(DBHelper.URL_READ_USERS, params, CODE_GET_REQUEST);
@@ -139,21 +142,75 @@ public class PerformNetworkRequestToGetPosts extends AsyncTask<Void, Void, Strin
 
     @Override
     public void onGetUsersResult(ArrayList<User> users) {
+        this.usersList = users;
         for (Post post : postsList) {
-            for (User user:users) {
+
+            for (User user : users) {
                 if (post.getUserId() == user.getId()) {
                     post.setUser(user);
                 }
             }
         }
-        iGetPostsListener.onGetPostsResult(postsList);
+
+        HashMap<String, String> params = new HashMap<>();
+        PerformNetworkRequestToGetLikesAndComments request = new PerformNetworkRequestToGetLikesAndComments(DBHelper.URL_READ_ALL_COMMENTS, params, CODE_POST_REQUEST);
+        request.setiGetAllCommentsListener(this);
+        request.execute();
+
+        //When you finish every thing for post
+//        iGetPostsListener.onGetPostsResult(postsList);
     }
 
     public void setiGetPostsListener(IGetPostsListener iGetPostsListener) {
         this.iGetPostsListener = iGetPostsListener;
     }
-}
 
+    @Override
+    public void onGetAllCommentsResult(ArrayList<Comment> comments) {
+
+        for (Comment comment : comments) {
+            for (User user : usersList) {
+                if (comment.getUserId() == user.getId()) {
+                    comment.setUser(user);
+                }
+            }
+        }
+
+        ArrayList<Comment> postComments = new ArrayList<>();
+        for (Post post : postsList) {
+            postComments.clear();
+            for (Comment comment : comments) {
+                if (post.getId() == comment.getPostId()) {
+                    postComments.add(new Comment(comment.getId()
+                            , comment.getPostId()
+                            , comment.getUserId()
+                            , comment.getDescription()));
+                }
+            }
+            post.setComments(postComments);
+        }
+
+        HashMap<String, String> params = new HashMap<>();
+        PerformNetworkRequestToGetLikesAndComments request = new PerformNetworkRequestToGetLikesAndComments(DBHelper.URL_READ_ALL_LIKES, params, CODE_POST_REQUEST);
+        request.setiGetAllLikesListener(this);
+        request.execute();
+
+    }
+
+    @Override
+    public void onGetAllLikesResult(ArrayList<Like> likesList) {
+        //When you finish every thing for post
+        for (Post post : postsList) {
+            for (Like like: likesList) {
+                if (post.getId() == like.getPost_id()) {
+                    post.setNumberOfLikes(post.getNumberOfLikes()+1);
+                }
+            }
+        }
+
+        iGetPostsListener.onGetPostsResult(postsList);
+    }
+}
 
 
 //call get users in doInbackground

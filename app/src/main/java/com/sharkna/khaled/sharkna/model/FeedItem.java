@@ -18,6 +18,8 @@ public class FeedItem {
     private String userName;
     private String firstName;
     private String lastName;
+    private int userId;
+    private int postId;
 
     public FeedItem(int likesCount, boolean isLiked) {
         this.likesCount = likesCount;
@@ -97,5 +99,21 @@ public class FeedItem {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public int getPostId() {
+        return postId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public void setPostId(int postId) {
+        this.postId = postId;
     }
 }

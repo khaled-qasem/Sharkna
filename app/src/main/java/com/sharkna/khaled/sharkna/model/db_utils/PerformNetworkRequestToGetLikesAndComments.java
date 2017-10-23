@@ -3,7 +3,8 @@ package com.sharkna.khaled.sharkna.model.db_utils;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.sharkna.khaled.sharkna.model.User;
+import com.sharkna.khaled.sharkna.model.Comment;
+import com.sharkna.khaled.sharkna.model.Post;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -18,23 +19,27 @@ import java.util.HashMap;
  * Descriptions
  */
 
-public class PerformNetworkRequestToGetUsers extends AsyncTask<Void, Void, String> {
+public class PerformNetworkRequestToGetLikesAndComments extends AsyncTask<Void, Void, String>  {
     private static final int CODE_GET_REQUEST = 1024;
     private static final int CODE_POST_REQUEST = 1025;
-    private static final String TAG = PerformNetworkRequestToGetUsers.class.getName();
-    private IGetUsersListener iGetUsersListener;
+    private static final String TAG = PerformNetworkRequestToGetLikesAndComments.class.getName();
+    IGetAllCommentsListener iGetAllCommentsListener;
+    IGetAllLikesListener iGetAllLikesListener;
     //the url where we need to send the request
     String url;
     String networkTask;
 
     //the parameters
     HashMap<String, String> params;
+    ArrayList<Post> postsList;
+    ArrayList<Comment> commentsList;
+    ArrayList<Like> likesList;
 
     //the request code to define whether it is a GET or POST
     int requestCode;
 
     //constructor to initialize values
-    public PerformNetworkRequestToGetUsers(String url, HashMap<String, String> params, int requestCode) {
+    public PerformNetworkRequestToGetLikesAndComments(String url, HashMap<String, String> params, int requestCode) {
         this.url = url;
         this.params = params;
         this.requestCode = requestCode;
@@ -62,8 +67,11 @@ public class PerformNetworkRequestToGetUsers extends AsyncTask<Void, Void, Strin
                 //so we get an updated list
                 //we will create this method right now it is commented
                 //because we haven't created it yet
-                if (url.equalsIgnoreCase(DBHelper.URL_READ_USERS)) {
-                    fillUsersList(object.getJSONArray("users"));
+                if (url.equalsIgnoreCase(DBHelper.URL_READ_ALL_COMMENTS)) {
+                    fillCommentsList(object.getJSONArray("allcomments"));
+
+                } else if (url.equalsIgnoreCase(DBHelper.URL_READ_ALL_LIKES)) {
+                    fillLikesList(object.getJSONArray("alllikes"));
                 }
 
                 //refreshHeroList(object.getJSONArray("heroes"));
@@ -71,6 +79,28 @@ public class PerformNetworkRequestToGetUsers extends AsyncTask<Void, Void, Strin
         } catch (JSONException e) {
             Log.e(TAG, "onPostExecute: JSONException", e);
         }
+    }
+
+    private void fillLikesList(JSONArray alllikes) throws JSONException {
+        //clearing previous heroes
+//        heroList.clear();
+        likesList = new ArrayList<>();
+
+        //traversing through all the items in the json array
+        //the json we got from the response
+        for (int i = 0; i < alllikes.length(); i++) {
+            //getting each hero object
+            JSONObject obj = alllikes.getJSONObject(i);
+
+            //adding the hero to the list
+            likesList.add(new Like(
+                    obj.getInt("id"),
+                    obj.getInt("user_id"),
+                    obj.getInt("post_id")
+            ));
+        }
+        iGetAllLikesListener.onGetAllLikesResult(likesList);
+
     }
 
     //the network operation will be performed in background
@@ -87,53 +117,38 @@ public class PerformNetworkRequestToGetUsers extends AsyncTask<Void, Void, Strin
         return null;
     }
 
-    private void handleJsonUserData(JSONObject jsonUserObject) {
-        User user = new User();
-        try {
-            user.setId(jsonUserObject.getInt("id"));
-            user.setUserName(jsonUserObject.getString("user_name"));
-            user.setFirstName(jsonUserObject.getString("first_name"));
-            user.setLastName(jsonUserObject.getString("last_name"));
-            user.setEmail(jsonUserObject.getString("email"));
-            user.setImageURL(jsonUserObject.getString("image_url"));
-            user.setPoints(jsonUserObject.getInt("points"));
-            user.setPassword(jsonUserObject.getString("password"));
-        } catch (JSONException e) {
-            Log.e(TAG, "handleJsonUserData: JSONExceptoin", e);
-        }
-    }
-
-    public void setiGetUsersListener(IGetUsersListener iGetUsersListener) {
-        this.iGetUsersListener = iGetUsersListener;
-    }
-
-    private void fillUsersList(JSONArray users) throws JSONException {
+    private void fillCommentsList(JSONArray posts) throws JSONException {
         //clearing previous heroes
 //        heroList.clear();
-        ArrayList usersList = new ArrayList();
+        commentsList = new ArrayList<>();
 
         //traversing through all the items in the json array
         //the json we got from the response
-        for (int i = 0; i < users.length(); i++) {
+        for (int i = 0; i < posts.length(); i++) {
             //getting each hero object
-            JSONObject obj = users.getJSONObject(i);
+            JSONObject obj = posts.getJSONObject(i);
 
             //adding the hero to the list
-            usersList.add(new User(
+            commentsList.add(new Comment(
                     obj.getInt("id"),
-                    obj.getString("user_name"),
-                    obj.getString("first_name"),
-                    obj.getString("last_name"),
-                    obj.getString("image_url"),
-                    obj.getString("email"),
-                    obj.getInt("points"),
-                    obj.getString("password")
+                    obj.getInt("user_id"),
+                    obj.getInt("post_id"),
+                    obj.getString("description")
             ));
         }
-        iGetUsersListener.onGetUsersResult(usersList);
-        //creating the adapter and setting it to the listview
+        iGetAllCommentsListener.onGetAllCommentsResult(commentsList);
+    }
+
+    public void setiGetAllCommentsListener(IGetAllCommentsListener iGetAllCommentsListener) {
+        this.iGetAllCommentsListener = iGetAllCommentsListener;
+    }
+
+    public void setiGetAllLikesListener(IGetAllLikesListener iGetAllLikesListener) {
+        this.iGetAllLikesListener = iGetAllLikesListener;
     }
 }
+
+
 
 //call get users in doInbackground
 // whenever users arraived assign users to posts

@@ -1,5 +1,7 @@
 package com.sharkna.khaled.sharkna.model;
 
+import java.util.ArrayList;
+
 /**
  * Created by Khaled on 10/20/2017.
  * Assumptions
@@ -16,13 +18,17 @@ public class Post {
     private String server_image_url;
     private int publicPost;
     private User user;
+    private boolean like;
+    private int numberOfLikes;
+    private ArrayList<Comment> comments;
 
-    public Post(int id, int userId, int municipalityId, String description, String server_image_url) {
+    public Post(int id, int userId, int municipalityId, String description, String server_image_url,int numberOfLikes) {
         this.id = id;
         this.userId = userId;
         this.municipalityId = municipalityId;
         this.description = description;
         this.server_image_url = server_image_url;
+        this.numberOfLikes = numberOfLikes;
     }
 
     public Post() {
@@ -90,5 +96,29 @@ public class Post {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public boolean isLike() {
+        return like;
+    }
+
+    public int getNumberOfLikes() {
+        return numberOfLikes;
+    }
+
+    public void setLike(boolean like) {
+        this.like = like;
+    }
+
+    public void setNumberOfLikes(int numberOfLikes) {
+        this.numberOfLikes = numberOfLikes;
+    }
+
+    public ArrayList<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
     }
 }

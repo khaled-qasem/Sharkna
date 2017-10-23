@@ -337,8 +337,12 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
     public void showLikedSnackbar(boolean liked) {
         if (liked) {
             Snackbar.make(clContent, "Liked!", Snackbar.LENGTH_SHORT).show();
+//            PerformNetworkRequest hitLikeRequest = new PerformNetworkRequest(DBHelper.URL_HIT_LIKE, null, DBHelper.CODE_GET_REQUEST);
+//            hitLikeRequest.execute();
         } else {
             Snackbar.make(clContent, "DisLiked!", Snackbar.LENGTH_SHORT).show();
+//            PerformNetworkRequest hitLikeRequest = new PerformNetworkRequest(DBHelper.URL_HIT_DISLIKE, null, DBHelper.CODE_GET_REQUEST);
+//            hitLikeRequest.execute();
         }
     }
 

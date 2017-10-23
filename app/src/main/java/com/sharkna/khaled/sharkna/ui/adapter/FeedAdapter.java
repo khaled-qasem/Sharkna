@@ -22,7 +22,8 @@ import com.sharkna.khaled.sharkna.model.db_utils.DBHelper;
 import com.sharkna.khaled.sharkna.model.db_utils.DownloadImageTask;
 import com.sharkna.khaled.sharkna.model.db_utils.DownloadRoundImageTask;
 import com.sharkna.khaled.sharkna.model.db_utils.IGetPostsListener;
-import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequestToGetPosts;
+import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequest;
+import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequestToGetAllPosts;
 import com.sharkna.khaled.sharkna.ui.activity.MainActivity;
 import com.sharkna.khaled.sharkna.ui.view.LoadingFeedItemView;
 
@@ -36,13 +37,13 @@ import butterknife.ButterKnife;
 /**
  * Created by Khaled on 18.06.17
  */
-public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements IGetPostsListener{
-    public static final String ACTION_LIKE_BUTTON_CLICKED = "action_like_button_button";
-    public static final String ACTION_LIKE_IMAGE_CLICKED = "action_like_image_button";
+public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> implements IGetPostsListener {
+    private static final String ACTION_LIKE_BUTTON_CLICKED = "action_like_button_button";
+    static final String ACTION_LIKE_IMAGE_CLICKED = "action_like_image_button";
     private static final int CODE_GET_REQUEST = 1024;
     private static final int CODE_POST_REQUEST = 1025;
-    public static final int VIEW_TYPE_DEFAULT = 1;
-    public static final int VIEW_TYPE_LOADER = 2;
+    static final int VIEW_TYPE_DEFAULT = 1;
+    private static final int VIEW_TYPE_LOADER = 2;
     private static final String TAG = FeedAdapter.class.getName();
 
     private final List<FeedItem> feedItems = new ArrayList<>();
@@ -51,7 +52,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     private OnFeedItemClickListener onFeedItemClickListener;
 
     private boolean showLoadingView = false;
-    private boolean liked=false;
+    private boolean liked = false;
     private boolean animated;
 
     public FeedAdapter(Context context) {
@@ -96,14 +97,24 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             public void onClick(View v) {
                 int adapterPosition = cellFeedViewHolder.getAdapterPosition();
                 FeedItem feedItem = feedItems.get(adapterPosition);
-                if(liked){
+                if (liked) {
                     feedItems.get(adapterPosition).likesCount--;
                     liked = !liked;
                     feedItem.isLiked = liked;
-                }else{
+                } else {
                     feedItems.get(adapterPosition).likesCount++;
                     liked = !liked;
                     feedItem.isLiked = liked;
+                }
+                HashMap<String, String> hitLikeRequestParams = new HashMap<>();
+                hitLikeRequestParams.put("user_id", String.valueOf(feedItem.getUserId()));
+                hitLikeRequestParams.put("post_id", String.valueOf(feedItem.getPostId()));
+                if (liked) {
+                    PerformNetworkRequest hitLikeRequest = new PerformNetworkRequest(DBHelper.URL_HIT_LIKE, hitLikeRequestParams, DBHelper.CODE_POST_REQUEST);
+                    hitLikeRequest.execute();
+                } else {
+                    PerformNetworkRequest hitLikeRequest = new PerformNetworkRequest(DBHelper.URL_HIT_DISLIKE, hitLikeRequestParams, DBHelper.CODE_POST_REQUEST);
+                    hitLikeRequest.execute();
                 }
                 feedItems.set(adapterPosition, feedItem);
                 notifyItemChanged(adapterPosition, ACTION_LIKE_IMAGE_CLICKED);
@@ -118,11 +129,11 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             public void onClick(View v) {
                 int adapterPosition = cellFeedViewHolder.getAdapterPosition();
                 FeedItem feedItem = feedItems.get(adapterPosition);
-                if(liked){
+                if (liked) {
                     feedItems.get(adapterPosition).likesCount--;
                     liked = !liked;
                     feedItem.isLiked = liked;
-                }else{
+                } else {
                     feedItems.get(adapterPosition).likesCount++;
                     liked = !liked;
                     feedItem.isLiked = liked;
@@ -180,54 +191,10 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public void updateItems(boolean animated) {
         this.animated = animated;
         HashMap<String, String> params = new HashMap<>();
-        PerformNetworkRequestToGetPosts request = new PerformNetworkRequestToGetPosts(DBHelper.URL_READ_POSTS, params, CODE_GET_REQUEST);
+        PerformNetworkRequestToGetAllPosts request = new PerformNetworkRequestToGetAllPosts(DBHelper.URL_READ_POSTS, params, CODE_GET_REQUEST);
         request.setiGetPostsListener(this);
         request.execute();
-
-       /* feedItems.clear();
-        // TODO: 10/20/2017 get posts from database here
-
-//        feedItems.addAll(matchFeedItemsWithPostsFromDatabase());
-        feedItems.addAll(Arrays.asList(
-                new FeedItem(33, false),
-                new FeedItem(1, false),
-                new FeedItem(223, false),
-                new FeedItem(2, false),
-                new FeedItem(6, false),
-                new FeedItem(8, false),
-                new FeedItem(99, false)
-        ));
-        if (animated) {
-            notifyItemRangeInserted(0, feedItems.size());
-        } else {
-            notifyDataSetChanged();
-        }*/
     }
-
-   /* public void updateItems(boolean animated,Uri photoUri) {
-        feedItems.clear();
-        feedItems.addAll(Arrays.asList(
-                new FeedItem(33, false),
-                new FeedItem(1, false),
-                new FeedItem(223, false),
-                new FeedItem(2, false),
-                new FeedItem(6, false),
-                new FeedItem(8, false),
-                new FeedItem(99, false)
-        ));
-        if(photoUri!=null){
-            int adapterPosition = 0;
-            FeedItem feedItem = feedItems.get(adapterPosition);
-            feedItem.photoUri = photoUri;
-            Log.d(TAG, "setPhotoUri: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"+photoUri.getEncodedPath());
-            feedItems.set(adapterPosition, feedItem);
-        }
-        if (animated) {
-            notifyItemRangeInserted(0, feedItems.size());
-        } else {
-            notifyDataSetChanged();
-        }
-    }*/
 
     public void setOnFeedItemClickListener(OnFeedItemClickListener onFeedItemClickListener) {
         this.onFeedItemClickListener = onFeedItemClickListener;
@@ -241,9 +208,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     public void setPhotoUri(Uri photoUri) {
         int adapterPosition = 0;
         FeedItem feedItem = feedItems.get(adapterPosition);
-        if(photoUri!=null){
+        if (photoUri != null) {
             feedItem.photoUri = photoUri;
-            Log.d(TAG, "setPhotoUri: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"+photoUri.getEncodedPath());
+            Log.d(TAG, "setPhotoUri: ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^" + photoUri.getEncodedPath());
             feedItems.set(adapterPosition, feedItem);
         }
         /*notifyItemChanged(adapterPosition, ACTION_LIKE_BUTTON_CLICKED);
@@ -276,14 +243,16 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         ImageView ivLike;
         @BindView(R.id.tsLikesCounter)
         TextSwitcher tsLikesCounter;
+        //        @Nullable
         @BindView(R.id.ivUserProfile)
         ImageView ivUserProfile;
-        @BindView(R.id.ivUserName)
+        @BindView(R.id.tvUserName)
         TextView ivUserName;
         @BindView(R.id.vImageRoot)
         FrameLayout vImageRoot;
 
         FeedItem feedItem;
+
 
         public CellFeedViewHolder(View view) {
             super(view);
@@ -297,7 +266,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
                     .execute(feedItem.getUserPhotoUri());
             new DownloadImageTask(ivFeedCenter)
                     .execute(feedItem.getServer_image_url());
-            ivUserName.setText(feedItem.getFirstName()+" "+feedItem.getLastName());
+            ivUserName.setText(feedItem.getFirstName() + " " + feedItem.getLastName());
             ivUserName.setTextSize(18f);
             ivUserName.setTextColor(Color.rgb(95, 98, 127));
             ivFeedBottom.setText(feedItem.getDescription());
@@ -341,15 +310,17 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         feedItems.clear();
         // TODO: 10/20/2017 get posts from database here
 
-        for (Post post:posts) {
-            FeedItem feedItem= new FeedItem();
+        for (Post post : posts) {
+            FeedItem feedItem = new FeedItem();
             feedItem.setServer_image_url(post.getServer_image_url());
             feedItem.setDescription(post.getDescription());
             feedItem.setLiked(false);
-            feedItem.setLikesCount(4);
+            feedItem.setLikesCount(post.getNumberOfLikes());
             feedItem.setFirstName(post.getUser().getFirstName());
             feedItem.setLastName(post.getUser().getLastName());
             feedItem.setUserPhotoUri(post.getUser().getImageURL());
+            feedItem.setPostId(post.getId());
+            feedItem.setUserId(post.getUserId());
             feedItems.add(feedItem);
         }
         if (animated) {
@@ -358,38 +329,4 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             notifyDataSetChanged();
         }
     }
-
-
-
-    /* static Bitmap getBitmapImage(String imageUrl){
-        URL url = null;
-        Bitmap image = null;
-        try {
-            url = new URL(imageUrl);
-            image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }*/
-
-
-    /*private static class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-        ImageView imageView;
-
-        public DownloadImageTask(ImageView imageView) {
-            this.imageView = imageView;
-        }
-
-        protected Bitmap doInBackground(String... urls) {
-            String urldisplay = urls[0];
-            return getBitmapImage(urldisplay );
-        }
-
-        protected void onPostExecute(Bitmap result) {
-            imageView.setImageBitmap(result);
-        }
-    }*/
 }
