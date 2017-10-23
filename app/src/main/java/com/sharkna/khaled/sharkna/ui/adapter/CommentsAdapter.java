@@ -4,6 +4,7 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,8 +13,11 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.sharkna.khaled.sharkna.R;
+import com.sharkna.khaled.sharkna.model.Comment;
 import com.sharkna.khaled.sharkna.ui.utils.RoundedTransformation;
 import com.squareup.picasso.Picasso;
+
+import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,14 +27,17 @@ import butterknife.ButterKnife;
  */
 public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final String TAG = CommentsAdapter.class.getName();
     private Context context;
-    private int itemsCount = 0;
+    private int itemsCount;
     private int lastAnimatedPosition = -1;
     private int avatarSize;
 
     private boolean animationsLocked = false;
     private boolean delayEnterAnimation = true;
     private String commentText="";
+    private ArrayList<Comment> comments;
+
 
     public CommentsAdapter(Context context) {
         this.context = context;
@@ -50,17 +57,8 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         if(position == itemsCount-1 && !commentText.isEmpty()){
             holder.tvComment.setText(commentText);
         }else{
-            switch (position % 3) {
-                case 0:
-                    holder.tvComment.setText("Here we can add first comment ");
-                    break;
-                case 1:
-                    holder.tvComment.setText("Here we can add second comment ");
-                    break;
-                case 2:
-                    holder.tvComment.setText("Here we can add third comment");
-                    break;
-            }
+            holder.tvComment.setText(comments.get(position).getDescription());
+
         }
 
 
@@ -101,7 +99,7 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
 
     public void updateItems() {
         // TODO: 10/23/2017 get results from database here
-        itemsCount = 10;
+        itemsCount = comments.size();
         notifyDataSetChanged();
     }
 
@@ -133,5 +131,11 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             super(view);
             ButterKnife.bind(this, view);
         }
+    }
+
+    public void setComments(ArrayList<Comment> comments) {
+        this.comments = comments;
+        this.itemsCount = comments.size();
+        Log.d(TAG, "setComments: "+itemsCount);
     }
 }

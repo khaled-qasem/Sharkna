@@ -17,8 +17,15 @@ import android.widget.LinearLayout;
 
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
+import com.sharkna.khaled.sharkna.model.Comment;
+import com.sharkna.khaled.sharkna.model.db_utils.DBHelper;
+import com.sharkna.khaled.sharkna.model.db_utils.IGetCommentsListener;
+import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequestToGetLikesAndComments;
 import com.sharkna.khaled.sharkna.ui.adapter.CommentsAdapter;
 import com.sharkna.khaled.sharkna.ui.view.SendCommentButton;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import butterknife.BindView;
 
@@ -27,8 +34,9 @@ import butterknife.BindView;
  * description:
  * assumption:
  */
-public class CommentsActivity extends BaseDrawerActivity implements SendCommentButton.OnSendClickListener {
+public class CommentsActivity extends BaseDrawerActivity implements SendCommentButton.OnSendClickListener ,IGetCommentsListener{
     public static final String ARG_DRAWING_START_LOCATION = "arg_drawing_start_location";
+    private static final String TAG = CommentsActivity.class.getName();
 
     @BindView(R.id.contentRoot)
     LinearLayout contentRoot;
@@ -43,16 +51,29 @@ public class CommentsActivity extends BaseDrawerActivity implements SendCommentB
 
     private CommentsAdapter commentsAdapter;
     private int drawingStartLocation;
+    private int postId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
-        setupComments();
-        setupSendCommentButton();
 
         drawingStartLocation = getIntent().getIntExtra(ARG_DRAWING_START_LOCATION, 0);
-        if (savedInstanceState == null) {
+        postId = getIntent().getIntExtra("postId",0);
+
+        HashMap<String, String> params = new HashMap<>();
+        params.put("post_id", String.valueOf(postId));
+        PerformNetworkRequestToGetLikesAndComments request = new PerformNetworkRequestToGetLikesAndComments(DBHelper.URL_READ_COMMENTS, params, DBHelper.CODE_POST_REQUEST);
+        request.setiGetCommentsListener(this);
+        request.execute();
+//        setupComments();
+//        setupSendCommentButton();
+
+
+//        drawingStartLocation = getIntent().getIntExtra(ARG_DRAWING_START_LOCATION, 0);
+//        postId = getIntent().getIntExtra("postId",0);
+
+       /* if (savedInstanceState == null) {
             contentRoot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
                 @Override
                 public boolean onPreDraw() {
@@ -61,15 +82,16 @@ public class CommentsActivity extends BaseDrawerActivity implements SendCommentB
                     return true;
                 }
             });
-        }
+        }*/
     }
 
-    private void setupComments() {
+    private void setupComments(ArrayList<Comment> comments) {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         rvComments.setLayoutManager(linearLayoutManager);
         rvComments.setHasFixedSize(true);
 
         commentsAdapter = new CommentsAdapter(this);
+        commentsAdapter.setComments(comments);
         rvComments.setAdapter(commentsAdapter);
         rvComments.setOverScrollMode(View.OVER_SCROLL_NEVER);
         rvComments.setOnScrollListener(new RecyclerView.OnScrollListener() {
@@ -149,5 +171,20 @@ public class CommentsActivity extends BaseDrawerActivity implements SendCommentB
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void onGetCommentsResult(ArrayList<Comment> comments) {
+
+        setupComments(comments);
+        setupSendCommentButton();
+        contentRoot.getViewTreeObserver().addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            @Override
+            public boolean onPreDraw() {
+                contentRoot.getViewTreeObserver().removeOnPreDrawListener(this);
+                startIntroAnimation();
+                return true;
+            }
+        });
     }
 }

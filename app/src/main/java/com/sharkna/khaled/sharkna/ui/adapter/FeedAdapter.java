@@ -82,7 +82,9 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         cellFeedViewHolder.btnComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onFeedItemClickListener.onCommentsClick(view, cellFeedViewHolder.getAdapterPosition());
+                onFeedItemClickListener.onCommentsClick(view, cellFeedViewHolder.getAdapterPosition()
+                        ,feedItems.get(cellFeedViewHolder.getAdapterPosition()).getPostId());
+                feedItems.get(cellFeedViewHolder.getAdapterPosition());
                 // TODO: 10/23/2017 handle comments here
             }
         });
@@ -245,7 +247,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         ImageView ivLike;
         @BindView(R.id.tsLikesCounter)
         TextSwitcher tsLikesCounter;
-        //        @Nullable
         @BindView(R.id.ivUserProfile)
         ImageView ivUserProfile;
         @BindView(R.id.tvUserName)
@@ -301,7 +302,8 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     }
 
     public interface OnFeedItemClickListener {
-        void onCommentsClick(View v, int position);
+//        void onCommentsClick(View v, int position);
+        void onCommentsClick(View v, int position,int postId);
 
         void onMoreClick(View v, int position);
 

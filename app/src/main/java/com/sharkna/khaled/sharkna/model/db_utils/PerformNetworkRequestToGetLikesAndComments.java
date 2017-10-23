@@ -25,6 +25,7 @@ public class PerformNetworkRequestToGetLikesAndComments extends AsyncTask<Void, 
     private static final String TAG = PerformNetworkRequestToGetLikesAndComments.class.getName();
     IGetAllCommentsListener iGetAllCommentsListener;
     IGetAllLikesListener iGetAllLikesListener;
+    IGetCommentsListener iGetCommentsListener;
     //the url where we need to send the request
     String url;
     String networkTask;
@@ -72,6 +73,8 @@ public class PerformNetworkRequestToGetLikesAndComments extends AsyncTask<Void, 
 
                 } else if (url.equalsIgnoreCase(DBHelper.URL_READ_ALL_LIKES)) {
                     fillLikesList(object.getJSONArray("alllikes"));
+                } else if (url.equalsIgnoreCase(DBHelper.URL_READ_COMMENTS)) {
+                    fillCommentsListForPost(object.getJSONArray("comments"));
                 }
 
                 //refreshHeroList(object.getJSONArray("heroes"));
@@ -145,6 +148,34 @@ public class PerformNetworkRequestToGetLikesAndComments extends AsyncTask<Void, 
 
     public void setiGetAllLikesListener(IGetAllLikesListener iGetAllLikesListener) {
         this.iGetAllLikesListener = iGetAllLikesListener;
+    }
+
+    public void setiGetCommentsListener(IGetCommentsListener iGetCommentsListener) {
+        this.iGetCommentsListener = iGetCommentsListener;
+    }
+
+    private void fillCommentsListForPost(JSONArray posts) throws JSONException {
+        //clearing previous heroes
+//        heroList.clear();
+        commentsList = new ArrayList<>();
+
+        //traversing through all the items in the json array
+        //the json we got from the response
+        for (int i = 0; i < posts.length(); i++) {
+            //getting each hero object
+            JSONObject obj = posts.getJSONObject(i);
+
+            //adding the hero to the list
+            commentsList.add(new Comment(
+                    obj.getInt("id"),
+                    obj.getInt("user_id"),
+                    obj.getInt("post_id"),
+                    obj.getString("description")
+            ));
+        }
+
+        Log.d(TAG, "fillCommentsListForPost: ========="+commentsList.size());
+        iGetCommentsListener.onGetCommentsResult(commentsList);
     }
 }
 

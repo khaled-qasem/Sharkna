@@ -128,7 +128,6 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
             String uri = intent.getStringExtra(PATH);
             if (uri != null) {
                 photoUri = Uri.parse(intent.getStringExtra(PATH));
-//                Log.d(TAG, "onCreate: ==========================????"+photoUri.getEncodedPath().toString());
             }
 
            /* if (gName != null && gEmail!=null) {
@@ -165,7 +164,6 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         if (savedInstanceState == null) {
             pendingIntroAnimation = true;
         } else {
-//            Log.d(TAG, "onCreate: +++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 //            feedAdapter.setPhotoUri(photoUri);
             feedAdapter.updateItems(false);
         }
@@ -276,12 +274,23 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         }
     }
 
-    @Override
+    /*@Override
     public void onCommentsClick(View v, int position) {
         final Intent intent = new Intent(this, CommentsActivity.class);
         int[] startingLocation = new int[2];
         v.getLocationOnScreen(startingLocation);
         intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
+        //add comments put extra user id and post id
+        startActivity(intent);
+        overridePendingTransition(0, 0);
+    }*/
+    @Override
+    public void onCommentsClick(View v, int position, int postId) {
+        final Intent intent = new Intent(this, CommentsActivity.class);
+        int[] startingLocation = new int[2];
+        v.getLocationOnScreen(startingLocation);
+        intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
+        intent.putExtra("postId", postId);
         //add comments put extra user id and post id
         startActivity(intent);
         overridePendingTransition(0, 0);
