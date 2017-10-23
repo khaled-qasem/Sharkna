@@ -282,6 +282,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         int[] startingLocation = new int[2];
         v.getLocationOnScreen(startingLocation);
         intent.putExtra(CommentsActivity.ARG_DRAWING_START_LOCATION, startingLocation[1]);
+        //add comments put extra user id and post id
         startActivity(intent);
         overridePendingTransition(0, 0);
     }
@@ -346,39 +347,4 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         this.user = user;
         currentAccount.setUserId(user.getId());
     }
-
-
-    // TODO: 10/14/2017 Handle sign out from firebase
-   /* @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.sign_out_menu:
-                mFirebaseAuth.signOut();
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                mUsername = ANONYMOUS;
-                startActivity(new Intent(this, SignInActivity.class));
-                finish();
-                return true;
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }*/
-
-
-    // TODO: 10/22/2017 user this to get benefit of image from server
-    /*private Bitmap getImage(JSONObject jo){
-        URL url = null;
-        Bitmap image = null;
-        try {
-            url = new URL(jo.getString(IMAGE_URL));
-            image = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return image;
-    }*/
 }

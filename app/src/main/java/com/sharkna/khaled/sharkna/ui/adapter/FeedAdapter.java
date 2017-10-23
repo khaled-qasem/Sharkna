@@ -82,6 +82,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             @Override
             public void onClick(View v) {
                 onFeedItemClickListener.onCommentsClick(view, cellFeedViewHolder.getAdapterPosition());
+                // TODO: 10/23/2017 handle comments here
             }
         });
         cellFeedViewHolder.btnMore.setOnClickListener(new View.OnClickListener() {
@@ -183,9 +184,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
         request.setiGetPostsListener(this);
         request.execute();
 
-
-
-
        /* feedItems.clear();
         // TODO: 10/20/2017 get posts from database here
 
@@ -258,25 +256,6 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
     @Override
     public void onGetPostsResult(ArrayList<Post> posts) {
         matchFeedItemsWithPostsFromDatabase(posts);
-        /*  feedItems.clear();
-        // TODO: 10/20/2017 get posts from database here
-
-        feedItems.addAll(matchFeedItemsWithPostsFromDatabase(posts));
-        *//*feedItems.addAll(Arrays.asList(
-                new FeedItem(33, false),
-                new FeedItem(1, false),
-                new FeedItem(223, false),
-                new FeedItem(2, false),
-                new FeedItem(6, false),
-                new FeedItem(8, false),
-                new FeedItem(99, false)
-        ));*//*
-        if (animated) {
-            notifyItemRangeInserted(0, feedItems.size());
-        } else {
-            notifyDataSetChanged();
-        }*/
-
     }
 
     public static class CellFeedViewHolder extends RecyclerView.ViewHolder {

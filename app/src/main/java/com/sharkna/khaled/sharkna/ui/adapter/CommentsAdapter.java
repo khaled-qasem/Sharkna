@@ -100,11 +100,13 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     }
 
     public void updateItems() {
+        // TODO: 10/23/2017 get results from database here
         itemsCount = 10;
         notifyDataSetChanged();
     }
 
     public void addItem() {
+        // TODO: 10/23/2017 send to database
         itemsCount++;
         notifyItemInserted(itemsCount - 1);
     }
