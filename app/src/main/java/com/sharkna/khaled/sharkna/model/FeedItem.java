@@ -10,7 +10,7 @@ import android.net.Uri;
 
 public class FeedItem {
     public int likesCount;
-    public boolean isLiked;
+    private boolean isLiked;
     public Uri photoUri;
     private String description;
     private String server_image_url;
@@ -116,4 +116,5 @@ public class FeedItem {
     public void setPostId(int postId) {
         this.postId = postId;
     }
+
 }

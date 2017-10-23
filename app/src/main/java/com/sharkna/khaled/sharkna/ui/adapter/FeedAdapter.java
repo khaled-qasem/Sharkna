@@ -97,14 +97,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             public void onClick(View v) {
                 int adapterPosition = cellFeedViewHolder.getAdapterPosition();
                 FeedItem feedItem = feedItems.get(adapterPosition);
+                liked = feedItem.isLiked();
                 if (liked) {
                     feedItems.get(adapterPosition).likesCount--;
                     liked = !liked;
-                    feedItem.isLiked = liked;
+                    feedItem.setLiked(liked);
                 } else {
                     feedItems.get(adapterPosition).likesCount++;
                     liked = !liked;
-                    feedItem.isLiked = liked;
+                    feedItem.setLiked(liked);
                 }
                 HashMap<String, String> hitLikeRequestParams = new HashMap<>();
                 hitLikeRequestParams.put("user_id", String.valueOf(feedItem.getUserId()));
@@ -129,14 +130,15 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             public void onClick(View v) {
                 int adapterPosition = cellFeedViewHolder.getAdapterPosition();
                 FeedItem feedItem = feedItems.get(adapterPosition);
+                liked = feedItem.isLiked();
                 if (liked) {
                     feedItems.get(adapterPosition).likesCount--;
                     liked = !liked;
-                    feedItem.isLiked = liked;
+                    feedItem.setLiked(liked);
                 } else {
                     feedItems.get(adapterPosition).likesCount++;
                     liked = !liked;
-                    feedItem.isLiked = liked;
+                    feedItem.setLiked(liked);
                 }
                 feedItems.set(adapterPosition, feedItem);
                 notifyItemChanged(adapterPosition, ACTION_LIKE_BUTTON_CLICKED);
@@ -271,7 +273,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             ivUserName.setTextColor(Color.rgb(95, 98, 127));
             ivFeedBottom.setText(feedItem.getDescription());
             ivFeedBottom.setTextSize(18f);
-            btnLike.setImageResource(feedItem.isLiked ? R.drawable.ic_heart_red : R.drawable.ic_heart_outline_grey);
+            btnLike.setImageResource(feedItem.isLiked() ? R.drawable.ic_heart_red : R.drawable.ic_heart_outline_grey);
             tsLikesCounter.setCurrentText(vImageRoot.getResources().getQuantityString(
                     R.plurals.likes_count, feedItem.likesCount, feedItem.likesCount
             ));
@@ -314,7 +316,7 @@ public class FeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> i
             FeedItem feedItem = new FeedItem();
             feedItem.setServer_image_url(post.getServer_image_url());
             feedItem.setDescription(post.getDescription());
-            feedItem.setLiked(false);
+            feedItem.setLiked(post.isLike());
             feedItem.setLikesCount(post.getNumberOfLikes());
             feedItem.setFirstName(post.getUser().getFirstName());
             feedItem.setLastName(post.getUser().getLastName());

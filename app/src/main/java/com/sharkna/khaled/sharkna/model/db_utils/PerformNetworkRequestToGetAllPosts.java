@@ -3,6 +3,7 @@ package com.sharkna.khaled.sharkna.model.db_utils;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.sharkna.khaled.sharkna.account.CurrentAccount;
 import com.sharkna.khaled.sharkna.model.Comment;
 import com.sharkna.khaled.sharkna.model.Post;
 import com.sharkna.khaled.sharkna.model.User;
@@ -28,7 +29,7 @@ public class PerformNetworkRequestToGetAllPosts extends AsyncTask<Void, Void, St
     //the url where we need to send the request
     String url;
     String networkTask;
-
+    CurrentAccount currentAccount;
     //the parameters
     HashMap<String, String> params;
     ArrayList<Post> postsList;
@@ -42,6 +43,7 @@ public class PerformNetworkRequestToGetAllPosts extends AsyncTask<Void, Void, St
         this.url = url;
         this.params = params;
         this.requestCode = requestCode;
+        this.currentAccount = CurrentAccount.getInstance();
     }
 
     //when the task started displaying a progressbar
@@ -204,6 +206,9 @@ public class PerformNetworkRequestToGetAllPosts extends AsyncTask<Void, Void, St
             for (Like like: likesList) {
                 if (post.getId() == like.getPost_id()) {
                     post.setNumberOfLikes(post.getNumberOfLikes()+1);
+                    if (currentAccount.getUserId() == like.getUser_id()) {
+                        post.setLike(true);
+                    }
                 }
             }
         }

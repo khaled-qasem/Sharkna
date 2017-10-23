@@ -134,7 +134,7 @@ public class FeedItemAnimator extends DefaultItemAnimator {
         bounceAnimY.addListener(new AnimatorListenerAdapter() {
             @Override
             public void onAnimationStart(Animator animation) {
-                if (holder.getFeedItem().isLiked) {
+                if (holder.getFeedItem().isLiked()) {
                     Log.d(TAG, "onAnimationStart: liked----------------------");
                     holder.btnLike.setImageResource(R.drawable.ic_heart_red);
                 } else {
