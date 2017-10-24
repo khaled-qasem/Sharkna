@@ -2,8 +2,12 @@ package com.sharkna.khaled.sharkna.ui.activity;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -13,15 +17,18 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.animation.OvershootInterpolator;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
 import com.sharkna.khaled.sharkna.account.CurrentAccount;
+import com.sharkna.khaled.sharkna.model.CurrentLocation;
 import com.sharkna.khaled.sharkna.model.User;
 import com.sharkna.khaled.sharkna.model.db_utils.DBHelper;
 import com.sharkna.khaled.sharkna.model.db_utils.IGetUserListener;
@@ -38,7 +45,7 @@ import butterknife.OnClick;
 
 
 public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFeedItemClickListener,
-        FeedContextMenu.OnFeedContextMenuItemClickListener, ICheckSelfPermissionActivity,IGetUserListener {
+        FeedContextMenu.OnFeedContextMenuItemClickListener, ICheckSelfPermissionActivity,IGetUserListener,LocationListener {
     public static final String ACTION_SHOW_LOADING_ITEM = "action_show_loading_item";
     public static final String GMAIL_PREFERENCE = "Gmail_account";
     public static final String ANONYMOUS = "anonymous";
@@ -73,6 +80,8 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
     private FirebaseUser mFirebaseUser;
     private String mEmail;
     private CurrentAccount currentAccount;
+    private LocationManager locationManager;
+    private CurrentLocation currentLocation;
 
 
     @Override
@@ -159,6 +168,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         }*/
 //        OKHttpGetRequest okHttpGetRequest = new OKHttpGetRequest();
 //        okHttpGetRequest.execute();
+        getLocation();
         setupFeed();
 
         if (savedInstanceState == null) {
@@ -167,6 +177,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 //            feedAdapter.setPhotoUri(photoUri);
             feedAdapter.updateItems(false);
         }
+
     }
 
     private void getUserFromDatabase(String email) {
@@ -355,9 +366,43 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
         }
     }
 
+    private void getLocation() {
+        try {
+            currentLocation = CurrentLocation.getInstance();
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 5, this);
+        }
+        catch(SecurityException e) {
+            Log.e(TAG, "getLocation: SecurityException", e);
+        }
+
+    }
+
     @Override
     public void onGetUserResult(User user) {
         this.user = user;
         currentAccount.setUserId(user.getId());
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+//        Log.d(TAG, "onLocationChanged: "+location.getLatitude() + ", " + location.getLongitude());
+        currentLocation.setLatitude(String.valueOf(location.getLatitude()));
+        currentLocation.setLongitude(String.valueOf(location.getLongitude()));
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+        Toast.makeText(MainActivity.this, "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
     }
 }
