@@ -138,8 +138,11 @@ public class PerformNetworkRequestToGetAllPosts extends AsyncTask<Void, Void, St
                     0
             ));
         }
+        DBUsers dbUsers = DBUsers.getInstance();
         PerformNetworkRequestToGetUsers request = new PerformNetworkRequestToGetUsers(DBHelper.URL_READ_USERS, params, CODE_GET_REQUEST);
-        request.setiGetUsersListener(this);
+        request.addIGetUsersListener(dbUsers);
+//        request.setiGetUsersListener(this);
+        request.addIGetUsersListener(this);
         request.execute();
     }
 

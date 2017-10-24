@@ -19,7 +19,9 @@ import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
 import com.sharkna.khaled.sharkna.account.CurrentAccount;
 import com.sharkna.khaled.sharkna.model.Comment;
+import com.sharkna.khaled.sharkna.model.User;
 import com.sharkna.khaled.sharkna.model.db_utils.DBHelper;
+import com.sharkna.khaled.sharkna.model.db_utils.DBUsers;
 import com.sharkna.khaled.sharkna.model.db_utils.IGetCommentsListener;
 import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequest;
 import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequestToGetLikesAndComments;
@@ -55,12 +57,13 @@ public class CommentsActivity extends BaseDrawerActivity implements SendCommentB
     private int drawingStartLocation;
     private int postId;
     private CurrentAccount currentAccount;
+    DBUsers dbUsers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
-
+        dbUsers = DBUsers.getInstance();
         currentAccount = CurrentAccount.getInstance();
         drawingStartLocation = getIntent().getIntExtra(ARG_DRAWING_START_LOCATION, 0);
         postId = getIntent().getIntExtra("postId",0);
@@ -188,6 +191,12 @@ public class CommentsActivity extends BaseDrawerActivity implements SendCommentB
 
     @Override
     public void onGetCommentsResult(ArrayList<Comment> comments) {
+        User user;
+//        dbUsers.getUserById(String.valueOf(comments.get(position).getUserId()));
+        for (Comment comment :
+                comments) {
+            comment.setUser(dbUsers.getUserById(String.valueOf(comment.getUserId())));
+        }
 
         setupComments(comments);
         setupSendCommentButton();

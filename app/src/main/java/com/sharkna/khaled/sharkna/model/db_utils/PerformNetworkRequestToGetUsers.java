@@ -22,7 +22,9 @@ public class PerformNetworkRequestToGetUsers extends AsyncTask<Void, Void, Strin
     private static final int CODE_GET_REQUEST = 1024;
     private static final int CODE_POST_REQUEST = 1025;
     private static final String TAG = PerformNetworkRequestToGetUsers.class.getName();
-    private IGetUsersListener iGetUsersListener;
+//    private IGetUsersListener iGetUsersListener;
+    private ArrayList<IGetUsersListener> iGetUsersListeners;
+
     //the url where we need to send the request
     String url;
     String networkTask;
@@ -38,6 +40,7 @@ public class PerformNetworkRequestToGetUsers extends AsyncTask<Void, Void, Strin
         this.url = url;
         this.params = params;
         this.requestCode = requestCode;
+        iGetUsersListeners= new ArrayList<>();
     }
 
     //when the task started displaying a progressbar
@@ -104,7 +107,12 @@ public class PerformNetworkRequestToGetUsers extends AsyncTask<Void, Void, Strin
     }
 
     public void setiGetUsersListener(IGetUsersListener iGetUsersListener) {
-        this.iGetUsersListener = iGetUsersListener;
+//        this.iGetUsersListener = iGetUsersListener;
+    }
+
+    public void addIGetUsersListener(IGetUsersListener iGetUsersListener) {
+        this.iGetUsersListeners.add(iGetUsersListener);
+//        this.iGetUsersListener = iGetUsersListener;
     }
 
     private void fillUsersList(JSONArray users) throws JSONException {
@@ -130,8 +138,11 @@ public class PerformNetworkRequestToGetUsers extends AsyncTask<Void, Void, Strin
                     obj.getString("password")
             ));
         }
-        iGetUsersListener.onGetUsersResult(usersList);
         //creating the adapter and setting it to the listview
+        for (IGetUsersListener iGetUsersListener :
+                iGetUsersListeners) {
+            iGetUsersListener.onGetUsersResult(usersList);
+        }
     }
 }
 

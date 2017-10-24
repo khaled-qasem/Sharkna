@@ -56,14 +56,19 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         runEnterAnimation(viewHolder.itemView, position);
         CommentViewHolder holder = (CommentViewHolder) viewHolder;
-//        User user = dbUsers.getUserById(String.valueOf(comments.get(position).getUserId()));
+//        User user=null;
+       /* if (dbUsers.getUserById(String.valueOf(comments.get(position).getUserId())) != null) {
+            user = dbUsers.getUserById(String.valueOf(comments.get(position).getUserId()));
+        }*/
 
         if(position == itemsCount-1 && !commentText.isEmpty()){
             holder.tvComment.setText(commentText);
         }else{
             holder.tvComment.setText(comments.get(position).getDescription());
-            /*new DownloadRoundImageTask(holder.ivUserAvatar)
-                    .execute(user.getImageURL());*/
+          /*  if (user != null) {
+                new DownloadRoundImageTask(holder.ivUserAvatar)
+                        .execute(user.getImageURL());
+            }*/
         }
 
         Picasso.with(context)

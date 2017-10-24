@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 
 public class DBUsers implements IGetUsersListener {
-    HashMap<String,User> dbUsers;
+    private HashMap<String,User> dbUsers;
     private static volatile DBUsers instance;
 
     public static DBUsers getInstance() {
@@ -40,6 +40,7 @@ public class DBUsers implements IGetUsersListener {
 
     @Override
     public void onGetUsersResult(ArrayList<User> users) {
+        dbUsers = new HashMap<>();
         for (User user :
                 users) {
             dbUsers.put(String.valueOf(user.getId()), user);
