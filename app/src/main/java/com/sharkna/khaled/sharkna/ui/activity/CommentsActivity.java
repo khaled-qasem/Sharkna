@@ -7,6 +7,7 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
@@ -17,9 +18,11 @@ import android.widget.LinearLayout;
 
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.Utils;
+import com.sharkna.khaled.sharkna.account.CurrentAccount;
 import com.sharkna.khaled.sharkna.model.Comment;
 import com.sharkna.khaled.sharkna.model.db_utils.DBHelper;
 import com.sharkna.khaled.sharkna.model.db_utils.IGetCommentsListener;
+import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequest;
 import com.sharkna.khaled.sharkna.model.db_utils.PerformNetworkRequestToGetLikesAndComments;
 import com.sharkna.khaled.sharkna.ui.adapter.CommentsAdapter;
 import com.sharkna.khaled.sharkna.ui.view.SendCommentButton;
@@ -52,12 +55,14 @@ public class CommentsActivity extends BaseDrawerActivity implements SendCommentB
     private CommentsAdapter commentsAdapter;
     private int drawingStartLocation;
     private int postId;
+    private CurrentAccount currentAccount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
 
+        currentAccount = CurrentAccount.getInstance();
         drawingStartLocation = getIntent().getIntExtra(ARG_DRAWING_START_LOCATION, 0);
         postId = getIntent().getIntExtra("postId",0);
 
@@ -159,9 +164,20 @@ public class CommentsActivity extends BaseDrawerActivity implements SendCommentB
             commentsAdapter.setCommentText(etComment.getText().toString());
             commentsAdapter.setAnimationsLocked(false);
             commentsAdapter.setDelayEnterAnimation(false);
+            HashMap<String, String> params = new HashMap<>();
+            params.put("post_id", String.valueOf(postId));
+            params.put("user_id", String.valueOf(currentAccount.getUserId()));
+            params.put("description", etComment.getText().toString());
+            Log.d(TAG, "onSendClickListener: "+String.valueOf(postId)+String.valueOf(currentAccount.getUserId())
+                    + etComment.getText().toString());
+            PerformNetworkRequest request = new PerformNetworkRequest(DBHelper.URL_ADD_COMMENT, params, DBHelper.CODE_POST_REQUEST);
+            request.execute();
             rvComments.smoothScrollBy(0, rvComments.getChildAt(0).getHeight() * commentsAdapter.getItemCount());
             etComment.setText(null);
             btnSendComment.setCurrentState(SendCommentButton.STATE_DONE);
+
+            //add item
+
         }
     }
 
