@@ -9,7 +9,7 @@ package com.sharkna.khaled.sharkna.model.db_utils;
 public class DBHelper {
 
 //    web
-//    private static final String ROOT_URL = "http://192.168.1.103/SharknaAPI/v1/api.php/get?apicall=";
+//    private static final String ROOT_URL = "http://sharknaapi.waha.ps/v1/api.php/get?apicall=";
 //    local
     private static final String ROOT_URL = "http://192.168.1.103/SharknaAPI/v1/api.php/get?apicall=";
 
