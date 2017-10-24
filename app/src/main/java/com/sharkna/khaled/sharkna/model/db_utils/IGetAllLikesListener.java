@@ -1,5 +1,7 @@
 package com.sharkna.khaled.sharkna.model.db_utils;
 
+import com.sharkna.khaled.sharkna.model.Like;
+
 import java.util.ArrayList;
 
 /**

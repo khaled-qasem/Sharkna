@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.sharkna.khaled.sharkna.R;
 import com.sharkna.khaled.sharkna.model.Comment;
+import com.sharkna.khaled.sharkna.model.db_utils.DBUsers;
 import com.sharkna.khaled.sharkna.ui.utils.RoundedTransformation;
 import com.squareup.picasso.Picasso;
 
@@ -37,11 +38,12 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private boolean delayEnterAnimation = true;
     private String commentText="";
     private ArrayList<Comment> comments;
-
+    private DBUsers dbUsers;
 
     public CommentsAdapter(Context context) {
         this.context = context;
         avatarSize = context.getResources().getDimensionPixelSize(R.dimen.comment_avatar_size);
+        dbUsers = DBUsers.getInstance();
     }
 
     @Override
@@ -54,13 +56,15 @@ public class CommentsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
         runEnterAnimation(viewHolder.itemView, position);
         CommentViewHolder holder = (CommentViewHolder) viewHolder;
+//        User user = dbUsers.getUserById(String.valueOf(comments.get(position).getUserId()));
+
         if(position == itemsCount-1 && !commentText.isEmpty()){
             holder.tvComment.setText(commentText);
         }else{
             holder.tvComment.setText(comments.get(position).getDescription());
-
+            /*new DownloadRoundImageTask(holder.ivUserAvatar)
+                    .execute(user.getImageURL());*/
         }
-
 
         Picasso.with(context)
                 .load(R.drawable.ic_launcher)

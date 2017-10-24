@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.sharkna.khaled.sharkna.model.Comment;
+import com.sharkna.khaled.sharkna.model.Like;
 import com.sharkna.khaled.sharkna.model.Post;
 
 import org.json.JSONArray;

@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.sharkna.khaled.sharkna.account.CurrentAccount;
 import com.sharkna.khaled.sharkna.model.Comment;
+import com.sharkna.khaled.sharkna.model.Like;
 import com.sharkna.khaled.sharkna.model.Post;
 import com.sharkna.khaled.sharkna.model.User;
 
