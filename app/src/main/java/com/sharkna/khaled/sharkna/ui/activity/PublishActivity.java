@@ -235,6 +235,8 @@ public class PublishActivity extends BaseActivity implements IOnPostAddedToDatab
         post.setUserId(currentAccount.getUserId());
         post.setMunicipalityId(0);
         post.setPublicPost(1);
+        post.setLatitude("3");
+        post.setLongitude("4");
 
         HashMap<String, String> params = new HashMap<>();
         params.put("user_id", String.valueOf(post.getUserId()));
@@ -242,6 +244,8 @@ public class PublishActivity extends BaseActivity implements IOnPostAddedToDatab
         params.put("description", post.getDescription());
         params.put("image", post.getImage());
         params.put("public_post", String.valueOf(post.getPublicPost()));
+        params.put("latitude", post.getLatitude());
+        params.put("longitude", post.getLongitude());
         //Calling the create hero API
         PerformNetworkRequestForResult request = new PerformNetworkRequestForResult(DBHelper.URL_CREATE_POST, params, CODE_POST_REQUEST);
         request.setiOnPostAddedToDatabaseListener(this);

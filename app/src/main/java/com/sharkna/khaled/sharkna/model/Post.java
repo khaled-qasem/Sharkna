@@ -20,6 +20,8 @@ public class Post {
     private User user;
     private boolean like;
     private int numberOfLikes;
+    private String latitude;
+    private String longitude;
     private ArrayList<Comment> comments;
 
     public Post(int id, int userId, int municipalityId, String description, String server_image_url,int numberOfLikes) {
@@ -120,5 +122,21 @@ public class Post {
 
     public void setComments(ArrayList<Comment> comments) {
         this.comments = comments;
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude;
     }
 }

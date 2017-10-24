@@ -6,7 +6,6 @@ package com.sharkna.khaled.sharkna.account;
  * Descriptions
  */
 
-// TODO: 8/17/2017 make this class singleton
 public final class CurrentAccount {
 
     private String userName;

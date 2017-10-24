@@ -386,7 +386,7 @@ public class MainActivity extends BaseDrawerActivity implements FeedAdapter.OnFe
 
     @Override
     public void onLocationChanged(Location location) {
-//        Log.d(TAG, "onLocationChanged: "+location.getLatitude() + ", " + location.getLongitude());
+        Log.d(TAG, "onLocationChanged: "+location.getLatitude() + ", " + location.getLongitude());
         currentLocation.setLatitude(String.valueOf(location.getLatitude()));
         currentLocation.setLongitude(String.valueOf(location.getLongitude()));
     }
