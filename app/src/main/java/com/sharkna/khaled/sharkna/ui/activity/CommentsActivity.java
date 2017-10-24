@@ -7,7 +7,6 @@ import android.support.v4.view.ViewCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateInterpolator;
@@ -168,8 +167,6 @@ public class CommentsActivity extends BaseDrawerActivity implements SendCommentB
             params.put("post_id", String.valueOf(postId));
             params.put("user_id", String.valueOf(currentAccount.getUserId()));
             params.put("description", etComment.getText().toString());
-            Log.d(TAG, "onSendClickListener: "+String.valueOf(postId)+String.valueOf(currentAccount.getUserId())
-                    + etComment.getText().toString());
             PerformNetworkRequest request = new PerformNetworkRequest(DBHelper.URL_ADD_COMMENT, params, DBHelper.CODE_POST_REQUEST);
             request.execute();
             rvComments.smoothScrollBy(0, rvComments.getChildAt(0).getHeight() * commentsAdapter.getItemCount());
